@@ -1,0 +1,8 @@
+sequenceDiagram
+participant User as Customer
+User->>Api: Pay
+alt Approved
+Api-->>User: OK
+else Refused
+Api-->>User: KO
+end

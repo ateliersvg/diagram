@@ -1,0 +1,95 @@
+{
+    "name": "atelier/diagram",
+    "description": "PHP library for modeling, parsing, rendering, and round-tripping diagrams as SVG and Mermaid",
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://github.com/ateliersvg/diagram",
+    "keywords": [
+        "diagram",
+        "chart",
+        "graph",
+        "svg",
+        "state-diagram",
+        "venn-diagram",
+        "git-graph",
+        "sequence-diagram",
+        "flowchart",
+        "class-diagram",
+        "er-diagram",
+        "timeline-diagram",
+        "mindmap",
+        "kanban-diagram",
+        "requirement-diagram",
+        "block-diagram",
+        "architecture-diagram",
+        "c4-diagram",
+        "uml",
+        "mermaid",
+        "parser",
+        "visualization",
+        "layout"
+    ],
+    "support": {
+        "issues": "https://github.com/ateliersvg/diagram/issues",
+        "source": "https://github.com/ateliersvg/diagram"
+    },
+    "authors": [
+        {
+            "name": "Simon André",
+            "email": "smn.andre@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.3",
+        "ext-mbstring": "*",
+        "atelier/layout": "^0.7",
+        "atelier/svg": "^1.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.94",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12.5"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "0.7.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Atelier\\Diagram\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Atelier\\Diagram\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "corpus": "php tools/verify-mermaid-corpus.php",
+        "coverage": "vendor/bin/phpunit --coverage-text",
+        "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff --sequential",
+        "cs:fix": "vendor/bin/php-cs-fixer fix",
+        "benchmark:parser": "php tools/benchmark-mermaid-parser.php",
+        "label-polish": "php examples/label-polish.php",
+        "showcase:page": "php examples/showcase-page.php",
+        "diagnostics:update": "php tools/update-mermaid-diagnostic-snapshots.php",
+        "parser": [
+            "@corpus",
+            "@rules",
+            "vendor/bin/phpunit tests/Parser"
+        ],
+        "qa": [
+            "@cs",
+            "@sa",
+            "@test"
+        ],
+        "rules": "php tools/verify-parser-rules.php",
+        "sa": "vendor/bin/phpstan analyse --memory-limit=-1",
+        "test": "vendor/bin/phpunit"
+    }
+}

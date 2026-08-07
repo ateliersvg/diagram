@@ -1,0 +1,8 @@
+flowchart TD
+    subgraph outer [Outer]
+        A[Cart]
+        subgraph inner [Inner]
+            B[Pay]
+        end
+    end
+    A --> B

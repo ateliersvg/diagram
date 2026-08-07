@@ -1,0 +1,10 @@
+C4Container
+title Shop platform
+Person(buyer, "Buyer", "Places orders")
+System_Ext(stripe, "Stripe", "Payment provider")
+System_Boundary(shop, "Shop Platform") {
+Container(web, "Web App", "Symfony", "Checkout UI")
+ContainerDb(db, "Orders DB", "PostgreSQL", "Order state")
+}
+Rel(buyer, web, "uses")
+Rel(web, db, "writes", "SQL")

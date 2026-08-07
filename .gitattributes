@@ -1,0 +1,10 @@
+* text=auto eol=lf
+/.git*                  export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/phpstan.neon.dist      export-ignore
+/phpunit.xml.dist       export-ignore
+/assets                 export-ignore
+/docs                   export-ignore
+/examples               export-ignore
+/tests                  export-ignore
+/tools                  export-ignore

@@ -1,0 +1,5 @@
+stateDiagram
+    direction LR
+    state "Ready" as Idle
+    [*] --> Idle
+    Idle --> Done : finish

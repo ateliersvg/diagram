@@ -1,0 +1,414 @@
+# state-unsupported-syntax
+Unsupported state diagram syntax [parser.unsupported_syntax] at line 2
+2 | note right of A: no
+  | ^^^^^^^^^^^^^^^^^^^
+
+# state-invalid-direction
+Unsupported direction "RL", expected TB or LR [parser.invalid_enum] at line 2
+2 | direction RL
+  | ^^^^^^^^^^^^
+
+# state-source-too-large
+Parser source exceeds maximum size of 16 bytes, got 29 bytes [parser.source_too_large] at line 1
+1 |
+  | ^
+
+# state-line-too-long
+Parser source line exceeds maximum length of 20 bytes [parser.line_too_long] at line 2
+2 | Idle --> VeryLongStateName
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# state-empty-diagram
+A state diagram must declare at least one state [parser.semantic_error] at line 1
+1 | stateDiagram-v2
+  | ^^^^^^^^^^^^^^^
+
+# git-unsupported-syntax
+Unsupported gitGraph syntax [parser.unsupported_syntax] at line 2
+2 | cherry-pick feature
+  | ^^^^^^^^^^^^^^^^^^^
+
+# git-semantic-builder-error
+Cannot merge unknown branch "feature" [parser.semantic_error] at line 2
+2 | merge feature
+  | ^^^^^^^^^^^^^
+
+# git-unknown-branch-checkout
+Cannot checkout unknown branch "feature" [parser.semantic_error] at line 2
+2 | checkout feature
+  | ^^^^^^^^^^^^^^^^
+
+# git-duplicate-branch
+Branch "feature" already exists [parser.semantic_error] at line 3
+3 | branch feature
+  | ^^^^^^^^^^^^^^
+
+# git-duplicate-commit-id
+Commit id "a1" is already used by another commit [parser.semantic_error] at line 3
+3 | commit id: "a1"
+  | ^^^^^^^^^^^^^^^
+
+# git-invalid-commit-attribute
+Invalid commit attribute, expected id: "..." or tag: "..." [parser.syntax_error] at line 2
+2 | commit type: "NORMAL"
+  | ^^^^^^^^^^^^^^^^^^^^^
+
+# git-duplicate-commit-attribute
+Duplicate commit attribute "id" [parser.syntax_error] at line 2
+2 | commit id: "a1" id: "a2"
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
+
+# git-unclosed-commit-attribute
+Invalid commit attribute, expected id: "..." or tag: "..." [parser.syntax_error] at line 2
+2 | commit id: "a1
+  | ^^^^^^^^^^^^^^
+
+# sequence-empty-label
+Sequence message label must not be empty [parser.empty_label] at line 2
+2 | A->>B:
+  | ^^^^^^
+
+# sequence-empty-diagram
+Sequence diagram must contain at least one participant [parser.semantic_error] at line 1
+1 | sequenceDiagram
+  | ^^^^^^^^^^^^^^^
+
+# sequence-unsupported-syntax
+Unsupported sequence diagram syntax [parser.unsupported_syntax] at line 2
+2 | note over User: unsupported
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# sequence-nested-block
+Nested sequence blocks are not supported [parser.nested_block] at line 3
+3 | alt fallback
+  | ^^^^^^^^^^^^
+
+# sequence-empty-block
+Sequence block must contain at least one message [parser.empty_block] at line 2
+2 | loop retry
+  | ^^^^^^^^^^
+
+# sequence-empty-final-branch
+Sequence branch must contain at least one message [parser.empty_branch] at line 4
+4 | else manual
+  | ^^^^^^^^^^^
+
+# sequence-duplicate-participant
+Sequence participant "User" is already declared [parser.semantic_error] at line 3
+3 | participant User as Customer
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# sequence-branch-context
+Sequence "else" is only supported inside alt blocks [parser.branch_context] at line 4
+4 | else fallback
+  | ^^^^^^^^^^^^^
+
+# sequence-unclosed-block-span
+Unclosed sequence block [parser.unclosed_block] at line 2
+2 | loop retry
+  | ^^^^^^^^^^
+
+# sequence-activate-before-message
+Sequence activation must follow a message [parser.semantic_error] at line 2
+2 | activate Api
+  | ^^^^^^^^^^^^
+
+# sequence-deactivate-before-activate
+Sequence participant "Api" is not active [parser.semantic_error] at line 3
+3 | deactivate Api
+  | ^^^^^^^^^^^^^^
+
+# flowchart-unsupported-syntax
+Unsupported flowchart syntax [parser.unsupported_syntax] at line 2
+2 | A((Circle))
+  | ^^^^^^^^^^^
+
+# flowchart-empty-diagram
+Flowchart must contain at least one node [parser.semantic_error] at line 1
+1 | flowchart TD
+  | ^^^^^^^^^^^^
+
+# flowchart-empty-subgraph
+Flow subgraph must contain at least one node [parser.empty_block] at line 2
+2 | subgraph checkout [Checkout]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# flowchart-unclosed-subgraph-span
+Unclosed flowchart block [parser.unclosed_block] at line 2
+2 | subgraph checkout [Checkout]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# flowchart-duplicate-subgraph
+Duplicate flow subgraph id "checkout" [parser.semantic_error] at line 1
+1 | flowchart TD
+  | ^^^^^^^^^^^^
+
+# flowchart-empty-node-label
+Flow node label must not be empty [parser.empty_label] at line 2
+2 | A[   ]
+  | ^^^^^^
+
+# flowchart-empty-edge-label
+Flow edge label must not be empty [parser.empty_label] at line 2
+2 | A -->|   | B
+  | ^^^^^^^^^^^^
+
+# class-unsupported-syntax
+Unsupported class diagram syntax [parser.unsupported_syntax] at line 2
+2 | User <|-- Admin
+  | ^^^^^^^^^^^^^^^
+
+# class-empty-diagram
+Class diagram must contain at least one class [parser.semantic_error] at line 1
+1 | classDiagram
+  | ^^^^^^^^^^^^
+
+# class-empty-member-label
+Class member label must not be empty [parser.empty_label] at line 2
+2 | User :
+  | ^^^^^^
+
+# class-empty-relation-label
+Class relation label must not be empty [parser.empty_label] at line 3
+3 | User --> Order :
+  | ^^^^^^^^^^^^^^^^
+
+# er-unsupported-syntax
+Unsupported ER diagram syntax [parser.unsupported_syntax] at line 2
+2 | CUSTOMER ||..|| ORDER : places
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# er-empty-diagram
+ER diagram must contain at least one entity [parser.semantic_error] at line 1
+1 | erDiagram
+  | ^^^^^^^^^
+
+# er-unclosed-entity-span
+Unclosed ER entity "CUSTOMER" [parser.unclosed_block] at line 2
+2 | CUSTOMER {
+  | ^^^^^^^^^^
+
+# block-duplicate-group
+Duplicate block group id "Primitives" [parser.semantic_error] at line 6
+6 | group Primitives [Duplicate]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# block-empty-group
+Block group "Empty" must contain at least one block [parser.semantic_error] at line 1
+1 | block
+  | ^^^^^
+
+# timeline-unsupported-syntax
+Unsupported timeline diagram syntax [parser.unsupported_syntax] at line 2
+2 | section
+  | ^^^^^^^
+
+# timeline-empty-diagram
+Timeline diagram must contain at least one section [parser.semantic_error] at line 1
+1 | timeline
+  | ^^^^^^^^
+
+# timeline-event-without-section
+Timeline event must belong to a section [parser.semantic_error] at line 2
+2 | Private beta : 2026-04
+  | ^^^^^^^^^^^^^^^^^^^^^^
+
+# timeline-empty-section
+Timeline section "Discovery" must contain at least one event [parser.semantic_error] at line 2
+2 | section Discovery
+  | ^^^^^^^^^^^^^^^^^
+
+# journey-unsupported-syntax
+Unsupported journey diagram syntax [parser.unsupported_syntax] at line 2
+2 | Open page: five: Customer
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# journey-empty-diagram
+Journey diagram must contain at least one section [parser.semantic_error] at line 1
+1 | journey
+  | ^^^^^^^
+
+# journey-task-without-section
+Journey task must belong to a section [parser.semantic_error] at line 2
+2 | Open product page: 5: Customer
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# journey-empty-actor-item
+Journey actors must not contain empty items [parser.empty_list_item] at line 3
+3 | Open product page: 5: Customer,
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# journey-invalid-score
+Journey task score must be between 1 and 5, got 6 [parser.semantic_error] at line 3
+3 | Open product page: 6: Customer
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# journey-empty-section
+Journey section "Browse" must contain at least one task [parser.semantic_error] at line 2
+2 | section Browse
+  | ^^^^^^^^^^^^^^
+
+# mindmap-unsupported-shape
+Mindmap v0 only supports root((Text)) shape syntax on the root node [parser.unsupported_syntax] at line 3
+3 |     Child((Bad))
+  | ^^^^^^^^^^^^^^^^
+
+# mindmap-indentation-tabs
+Mindmap indentation must use spaces only [parser.indentation_tabs] at line 2
+2 | 	root((Atelier))
+  | ^^^^^^^^^^^^^^^^
+
+# mindmap-indentation-skip
+Mindmap indentation cannot skip levels [parser.indentation_skip] at line 3
+3 |       Skipped
+  | ^^^^^^^^^^^^^
+
+# mindmap-empty-diagram
+Mindmap diagram must contain exactly one root [parser.semantic_error] at line 1
+1 | mindmap
+  | ^^^^^^^
+
+# mindmap-duplicate-root
+Mindmap diagram must contain exactly one root [parser.semantic_error] at line 3
+3 |   root((Other))
+  | ^^^^^^^^^^^^^^^
+
+# requirement-unsupported-syntax
+Unsupported requirement diagram syntax [parser.unsupported_syntax] at line 2
+2 | checkout --> cart
+  | ^^^^^^^^^^^^^^^^^
+
+# requirement-empty-diagram
+Requirement diagram must contain at least one node [parser.semantic_error] at line 1
+1 | requirementDiagram
+  | ^^^^^^^^^^^^^^^^^^
+
+# requirement-unknown-relationship-node
+Requirement relationship references unknown node "cart" [parser.semantic_error] at line 1
+1 | requirementDiagram
+  | ^^^^^^^^^^^^^^^^^^
+
+# requirement-duplicate-node-kind
+Requirement diagram node "checkout" cannot be both "requirement" and "element" [parser.semantic_error] at line 5
+5 | element checkout {
+  | ^^^^^^^^^^^^^^^^^^
+
+# requirement-unclosed-node-span
+Unclosed requirement diagram node "checkout" [parser.unclosed_block] at line 2
+2 | requirement checkout {
+  | ^^^^^^^^^^^^^^^^^^^^^^
+
+# kanban-card-without-column
+Kanban card must belong to a column [parser.semantic_error] at line 2
+2 |         REQ-1 [Write parser]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# kanban-indentation-tabs
+Kanban indentation must use spaces only [parser.indentation_tabs] at line 2
+2 | 	todo [Todo]
+  | ^^^^^^^^^^^^
+
+# kanban-empty-column-label
+Kanban column label must not be empty [parser.empty_value] at line 2
+2 |     todo [   ]
+  | ^^^^^^^^^^^^^^
+
+# kanban-duplicate-column
+Duplicate kanban column id "todo" [parser.semantic_error] at line 3
+3 |     todo [Todo again]
+  | ^^^^^^^^^^^^^^^^^^^^^
+
+# kanban-duplicate-card
+Duplicate kanban card id "REQ-1" [parser.semantic_error] at line 4
+4 |         REQ-1 [Write parser again]
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# kanban-unsupported-syntax
+Unsupported kanban diagram syntax [parser.unsupported_syntax] at line 2
+2 |     todo
+  | ^^^^^^^^
+
+# block-unsupported-syntax
+Unsupported block diagram syntax [parser.unsupported_syntax] at line 2
+2 | port Api
+  | ^^^^^^^^
+
+# block-empty-node-label
+Block label must not be empty [parser.empty_label] at line 2
+2 | block Solver [   ]
+  | ^^^^^^^^^^^^^^^^^^
+
+# block-empty-group-label
+Block group label must not be empty [parser.empty_label] at line 2
+2 | group Empty [   ]
+  | ^^^^^^^^^^^^^^^^^
+
+# block-unexpected-end
+Unexpected block diagram block end [parser.unexpected_block_end] at line 2
+2 | end
+  | ^^^
+
+# block-nested-group
+Nested block groups are not supported yet [parser.nested_block] at line 3
+3 | group Nested [Nested]
+  | ^^^^^^^^^^^^^^^^^^^^^
+
+# block-unclosed-group-span
+Unclosed block group "Core" [parser.unclosed_block] at line 2
+2 | group Core [Core]
+  | ^^^^^^^^^^^^^^^^^
+
+# architecture-unsupported-syntax
+Unsupported architecture diagram syntax [parser.unsupported_syntax] at line 2
+2 | service Api [API]
+  | ^^^^^^^^^^^^^^^^^
+
+# architecture-empty-diagram
+Architecture diagram must contain at least one node [parser.semantic_error] at line 1
+1 | architecture
+  | ^^^^^^^^^^^^
+
+# architecture-duplicate-node
+Duplicate architecture node id "App" [parser.semantic_error] at line 3
+3 | component App
+  | ^^^^^^^^^^^^^
+
+# architecture-duplicate-group
+Duplicate architecture group id "Web" [parser.semantic_error] at line 3
+3 | group Web [Web tier]
+  | ^^^^^^^^^^^^^^^^^^^^
+
+# architecture-empty-group-label
+Architecture group label must not be empty [parser.empty_label] at line 2
+2 | group Web []
+  | ^^^^^^^^^^^^
+
+# architecture-relationship-before-node
+Architecture relationship references unknown node "App" [parser.semantic_error] at line 2
+2 | App -> Api : calls
+  | ^^^^^^^^^^^^^^^^^^
+
+# architecture-empty-relationship-label
+Architecture relationship label must not be empty [parser.empty_label] at line 4
+4 | App -> Api :
+  | ^^^^^^^^^^^^
+
+# architecture-unknown-relationship-node
+Architecture relationship references unknown node "Api" [parser.semantic_error] at line 3
+3 | App -> Api : calls
+  | ^^^^^^^^^^^^^^^^^^
+
+# c4-unsupported-syntax
+Unsupported C4 diagram syntax [parser.unsupported_syntax] at line 2
+2 | Deployment_Node(node, "Node")
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# c4-nested-boundary
+Nested C4 boundaries are not supported [parser.syntax_error] at line 3
+3 | System_Boundary(inner, "Inner") {
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+# kanban-empty-diagram
+Kanban diagram must contain at least one column [parser.semantic_error] at line 1
+1 | kanban
+  | ^^^^^^
