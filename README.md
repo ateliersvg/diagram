@@ -1,49 +1,35 @@
-# Atelier Diagram
+<h1 align="center">Atelier Diagram</h1>
 
-PHP diagrams that can be built as typed models, parsed from Mermaid, rendered to SVG, and serialized back to canonical Mermaid.
+<p align="center">Fifteen diagram families, from PHP or from Mermaid, rendered to SVG without a browser.</p>
 
-`atelier/diagram` is for applications that need diagram output without a browser, JavaScript runtime, or external CLI. It keeps the pipeline explicit:
-
-```text
-PHP builder or Mermaid text -> typed model -> layout scene -> SVG
-                                 |
-                                 `-> canonical Mermaid markdown
-```
-
-<p>
-  <img src="docs/images/state-lr.svg" alt="State diagram rendered by atelier/diagram" width="48%">
-  <img src="docs/images/git-graph.svg" alt="Git graph rendered by atelier/diagram" width="48%">
+<p align="center">
+  <img alt="PHP Version" src="https://img.shields.io/badge/PHP-8.3%2B-7e73ee?labelColor=14141c">
+  <img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/ateliersvg/diagram/CI.yml?branch=main&label=Tests&labelColor=14141c&color=7e73ee">
+  <img alt="PHPUnit" src="https://img.shields.io/badge/PHPUnit-13-7e73ee?labelColor=14141c">
+  <img alt="PHPStan" src="https://img.shields.io/badge/PHPStan-max-7e73ee?labelColor=14141c">
+  <img alt="Stable" src="https://img.shields.io/github/v/release/ateliersvg/diagram?label=Stable&labelColor=14141c&color=7e73ee">
+  <img alt="License" src="https://img.shields.io/github/license/ateliersvg/diagram?label=License&labelColor=14141c&color=7e73ee">
 </p>
 
-> A fuller showcase mosaic can be generated with `composer showcase:page`; commit the curated artifacts under `docs/images/` to grow this strip.
+Build a typed model with a fluent builder, or parse a documented Mermaid subset, then render
+deterministic SVG. No headless browser, no JavaScript runtime, no external binary.
 
-Every type below has a fluent PHP builder and SVG rendering. All types except Venn also have a precise Mermaid-like parser and canonical Mermaid emission.
+```php
+echo Diagram::fromMermaid($source)->toSvg();
+```
 
-| Type | Builder | Mermaid in | Mermaid out | SVG |
-|------|:-------:|:----------:|:-----------:|:---:|
-| State | yes | subset | yes | yes |
-| Venn | yes | no | no | yes |
-| Git graph | yes | subset | yes | yes |
-| Sequence | yes | subset | yes | yes |
-| Flowchart | yes | subset | yes | yes |
-| Class | yes | subset | yes | yes |
-| ER | yes | subset | yes | yes |
-| Timeline | yes | subset | yes | yes |
-| Journey | yes | subset | yes | yes |
-| Mindmap | yes | subset | yes | yes |
-| Requirement | yes | subset | yes | yes |
-| Kanban | yes | subset | yes | yes |
-| Block | yes | subset | yes | yes |
-| Architecture | yes | subset | yes | yes |
-| C4 | yes | subset | yes | yes |
+<p align="center">
+  <img src="docs/images/state-diagram.svg" width="230" alt="A state diagram">
+  &nbsp;
+  <img src="docs/images/sequence-diagram.svg" width="230" alt="A sequence diagram">
+</p>
 
-`Mermaid in` is a subset for every textual type: unsupported syntax throws `ParseException` rather than degrading silently (see [Mermaid support](docs/mermaid.md) for the exact grammar per type). Venn currently has no text grammar in this package.
+The same model renders back to canonical Mermaid, and round-trip tests hold both directions to
+it. Backed by an extensive test suite and PHPStan at its highest level.
 
-## Maturity
-
-The core diagram families are **State**, **Git graph**, **Sequence**, **Flowchart**, and **Class**. These are the paths that receive the strictest expectations for parser clarity, round-trip behavior, layout polish, screenshots, and documentation.
-
-The other families, **Venn**, **ER**, **Timeline**, **Journey**, **Mindmap**, **Requirement**, **Kanban**, **Block**, **Architecture**, and **C4**, are supported but earlier. They are useful, tested, and documented, but their layout algorithms and Mermaid subsets are intentionally smaller while the shared layout layer hardens.
+**[Diagram types](#fifteen-diagram-types) · [Build from PHP](#build-from-php) ·
+[Parse Mermaid](#parse-mermaid) · [Render](#render) · [Theming](#theming) ·
+[Documentation](#documentation)**
 
 ## Installation
 
@@ -51,11 +37,47 @@ The other families, **Venn**, **ER**, **Timeline**, **Journey**, **Mindmap**, **
 composer require atelier/diagram
 ```
 
-Requires PHP 8.3+. SVG output is produced through `atelier/svg`; layout-heavy diagram engines share spatial primitives from `atelier/layout`.
+Requires PHP 8.3 or later. Depends on `atelier/svg` for output and `atelier/layout` for
+spatial maths, both pure PHP.
 
-The package requires `atelier/layout` with a `^1.0@dev` constraint while the sibling package is still developed locally. The workspace keeps a Composer path repository at `../layout`, mapped to version `1.x-dev`, so development can use the sibling checkout without publishing a tag.
+## Quick start
 
-## Build A Diagram
+```php
+use Atelier\Diagram\Diagram;
+
+$source = <<<'MERMAID'
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Review: submit
+    Review --> [*]: approve
+MERMAID;
+
+file_put_contents('order.svg', Diagram::fromMermaid($source)->toSvg());
+```
+
+The grammar is detected from the first significant line. See
+[Getting started](docs/getting-started.md).
+
+## Fifteen diagram types
+
+| Type | Mermaid header | Type | Mermaid header |
+|---|---|---|---|
+| [Flowchart](docs/diagrams/flowchart.md) | `flowchart` | [Mindmap](docs/diagrams/mindmap-diagram.md) | `mindmap` |
+| [State](docs/diagrams/state-diagram.md) | `stateDiagram-v2` | [Requirement](docs/diagrams/requirement-diagram.md) | `requirementDiagram` |
+| [Sequence](docs/diagrams/sequence-diagram.md) | `sequenceDiagram` | [Kanban](docs/diagrams/kanban-diagram.md) | `kanban` |
+| [Class](docs/diagrams/class-diagram.md) | `classDiagram` | [Block](docs/diagrams/block-diagram.md) | `block` |
+| [ER](docs/diagrams/er-diagram.md) | `erDiagram` | [Architecture](docs/diagrams/architecture-diagram.md) | `architecture` |
+| [Git graph](docs/diagrams/git-graph.md) | `gitGraph` | [C4](docs/diagrams/c4-diagram.md) | `C4Context` |
+| [Timeline](docs/diagrams/timeline-diagram.md) | `timeline` | [Venn](docs/diagrams/venn-diagram.md) | builder only |
+| [Journey](docs/diagrams/journey-diagram.md) | `journey` | | |
+
+Each page shows the same diagram three ways: its Mermaid source, the equivalent PHP, and the
+rendered result. Venn diagrams have no text form in this package.
+
+## Build from PHP
+
+Every type has a fluent builder reached from the facade, and each one speaks its own domain:
+states and transitions, participants and messages, commits and branches.
 
 ```php
 use Atelier\Diagram\Diagram;
@@ -66,210 +88,88 @@ $order = Diagram::state()
     ->transition('Draft', 'Review', 'submit')
     ->transition('Review', 'Approved', 'approve')
     ->transition('Review', 'Draft', 'reject')
-    ->transition('Approved', 'Shipped', 'ship')
-    ->final('Shipped')
+    ->final('Approved')
     ->build();
 
 Diagram::of($order)->saveSvg('order.svg');
 ```
 
-Every builder returns an immutable model. Wrap it with `Diagram::of($model)` to render it:
-
-```php
-$svg = Diagram::of($order)->toSvg();
-$document = Diagram::of($order)->toSvgDocument();
-$markdown = Diagram::of($order)->toMarkdown();
-$mermaid = Diagram::of($order)->toMermaid();
-```
+The builder returns a typed model, not markup, so it can be inspected, tested, and rendered more
+than once.
 
 ## Parse Mermaid
 
-```php
-use Atelier\Diagram\Diagram;
-
-$diagram = Diagram::fromMermaid(<<<'MERMAID'
-    sequenceDiagram
-        participant User
-        participant Api as API
-        User->>Api: Checkout
-        Api-->>User: Receipt
-    MERMAID);
-
-$svg = $diagram->toSvg();
-$canonical = $diagram->toMermaid();
-```
-
-The Mermaid support is intentionally a precise subset. Unsupported syntax throws `ParseException` with the source line instead of being silently ignored. Everything a parser accepts, the Mermaid emitter can re-emit, so `Mermaid -> model -> canonical Mermaid` is stable for the supported subset.
-
-## Class Diagram Example
+Fourteen of the fifteen families parse a deliberately small, exactly specified Mermaid subset.
+Anything outside it throws a `ParseException` carrying the offending line number, rather than
+silently rendering something else.
 
 ```php
-$diagram = Diagram::classDiagram()
-    ->member('User', '+id int')
-    ->member('User', '+email string')
-    ->member('Order', '+total Money')
-    ->relation('User', 'Order', 'places')
-    ->build();
-
-file_put_contents('classes.svg', Diagram::of($diagram)->toSvg());
+$diagram = Diagram::fromMermaid($source);   // throws on anything unsupported
+$maybe   = Diagram::tryFromMermaid($source); // null instead of an exception
 ```
 
-Equivalent Mermaid:
+What the parser accepts, the Markdown renderer emits, and round-trip tests hold both sides to
+it. See [Mermaid support](docs/mermaid.md).
 
-```mermaid
-classDiagram
-    class User
-    User : +id int
-    User : +email string
-    class Order
-    Order : +total Money
-    User --> Order : places
-```
-
-## ER Diagram Example
+## Render
 
 ```php
-$diagram = Diagram::er()
-    ->attribute('CUSTOMER', 'string', 'name')
-    ->attribute('CUSTOMER', 'string', 'email')
-    ->attribute('ORDER', 'int', 'id')
-    ->attribute('ORDER', 'decimal', 'total')
-    ->relationship('CUSTOMER', '||', 'ORDER', 'o{', 'places')
-    ->build();
+$diagram = Diagram::fromMermaid($source);
 
-file_put_contents('er.svg', Diagram::of($diagram)->toSvg());
+$diagram->toSvg();        // a string of SVG markup
+$diagram->saveSvg($path); // the same, written to a file
+$diagram->toMermaid();    // canonical Mermaid, back from the model
+$diagram->toMarkdown();   // a fenced Mermaid block, for a README
 ```
 
-Equivalent Mermaid:
+`toSvgDocument()` hands back an `atelier/svg` document when the diagram has to compose into a
+larger drawing. See [Renderers](docs/renderers.md).
 
-```mermaid
-erDiagram
-    CUSTOMER {
-        string name
-        string email
-    }
-    ORDER {
-        int id
-        decimal total
-    }
-    CUSTOMER ||--o{ ORDER : places
-```
+## Theming
 
-## Venn In A Fixed Canvas
+Five presets, and every colour, font and spacing value is a field you can override.
 
 ```php
-$venn = Diagram::venn()
-    ->set('Frontend')
-    ->set('Backend')
-    ->regionLabel('AB', 'Shared capability')
-    ->targetSize(200, 400)
-    ->paddingPercent(4)
-    ->innerPaddingPercent(4)
-    ->circleStrokeWidth(10)
-    ->build();
+use Atelier\Diagram\Theme\Theme;
 
-$svg = Diagram::of($venn)->toSvg();
+$diagram->toSvg(Theme::dark());
 ```
 
-That path validates the shared layout package: target canvas sizing, percent padding, fixed stroke width, circle safe areas, and multiline text layout are all solved before SVG rendering.
-
-## Design Guarantees
-
-- **Typed models first**: diagram semantics live in model objects, not in SVG strings.
-- **Renderer boundary**: layout engines output a renderer-agnostic `Scene`; only `Renderer\Svg` depends on `atelier/svg`.
-- **Deterministic output**: layout math and text measurement are stable enough for snapshot tests.
-- **Strict parsers**: unsupported Mermaid syntax fails loudly with line numbers.
-- **Round trips**: parser and markdown renderer are kept symmetrical for every supported grammar.
+`default`, `dark`, `blueprint`, `mono`, and `neutral`. See [Theming](docs/theming.md).
 
 ## Documentation
 
-- [Getting started](docs/getting-started.md)
-- [Mermaid support](docs/mermaid.md)
-- [State diagrams](docs/state-diagram.md)
-- [Venn diagrams](docs/venn-diagram.md)
-- [Git graphs](docs/git-graph.md)
-- [Sequence diagrams](docs/sequence-diagram.md)
-- [Flowcharts](docs/flowchart.md)
-- [Class diagrams](docs/class-diagram.md)
-- [ER diagrams](docs/er-diagram.md)
-- [Timeline diagrams](docs/timeline-diagram.md)
-- [Journey diagrams](docs/journey-diagram.md)
-- [Mindmap diagrams](docs/mindmap-diagram.md)
-- [Kanban diagrams](docs/kanban-diagram.md)
-- [Requirement diagrams](docs/requirement-diagram.md)
-- [Block diagrams](docs/block-diagram.md)
-- [Architecture diagrams](docs/architecture-diagram.md)
-- [C4 diagrams](docs/c4-diagram.md)
-- [Showcase](docs/showcase.md)
-- [Package maturity](docs/maturity.md)
-- [Theming](docs/theming.md)
-- [Renderers](docs/renderers.md)
-- [Internal architecture](docs/architecture.md)
+- [Getting started](docs/getting-started.md): install, first diagram, first render.
+- [Every diagram type](docs/diagrams/overview.md): compare the fifteen and pick one.
+- [Theming](docs/theming.md): presets, and the fields each one sets.
+- [Renderers](docs/renderers.md): SVG, Markdown, and canonical Mermaid.
+- [Mermaid support](docs/mermaid.md): the accepted subset, grammar by grammar.
 
-## Examples
+The full documentation is published at [ateliersvg.com/diagram](https://ateliersvg.com/diagram/).
 
-Generate the local demo index:
+## Contributing
+
+Contributions are welcome. Visit the [project on GitHub](https://github.com/ateliersvg/diagram)
+to [report a bug](https://github.com/ateliersvg/diagram/issues/new),
+[suggest a feature](https://github.com/ateliersvg/diagram/issues/new), or
+[open a pull request](https://github.com/ateliersvg/diagram/pulls).
+
+Before submitting code, run:
 
 ```bash
-php examples/demo.php
+composer qa   # PHP-CS-Fixer, PHPStan at level max, and PHPUnit
 ```
 
-The demo writes `examples/output/index.html`. It runs the gallery, showcase, label-polish, and effects generators, then creates one browser entry point for the generated pages.
+Changes to public behaviour need a test and a documentation update.
 
-Generate all gallery artifacts:
+## Support
 
-```bash
-php examples/gallery.php
-```
+Bug reports, security disclosures, and contribution guidelines are collected at
+[ateliersvg.com/support](https://ateliersvg.com/support/).
 
-The generated files land in `examples/output/`: SVG examples, canonical Mermaid markdown, and a renderer smoke scene.
-
-Generate the full-viewport HTML showcase deck:
-
-```bash
-composer showcase:page
-```
-
-The deck is written to `examples/output/showcase/index.html`. It contains full-screen sections for the main Mermaid-like diagram types, each with an SVG demo, supported-options notes, canonical Mermaid source, and a PHP builder sample.
-
-Generate the label-polish audit:
-
-```bash
-php examples/label-polish.php
-```
-
-The audit is written to `examples/output/label-polish/`. It creates an index and one page per diagram family, with short and long labels covering routes, legends, node text, grouped labels, and values.
-
-## Development
-
-```bash
-composer parser
-composer qa
-composer benchmark:parser
-php examples/demo.php
-composer label-polish
-composer showcase:page
-composer validate --strict
-php examples/gallery.php
-```
-
-`composer qa` runs coding style checks, PHPStan, and PHPUnit. Tests include parser errors, model validation, Mermaid round trips, layout snapshots, and SVG renderer coverage.
-`composer parser` runs the Mermaid corpus verifier, parser rule verifier, and parser PHPUnit suite.
-`composer benchmark:parser` profiles three parser paths on representative samples: public parse, already-dispatched parse, and detect-only header lookup.
-Run QA with PHP 8.3 when checking release compatibility; newer PHP runtimes can make PHP CS Fixer suggest syntax that the package promise does not allow.
-
-The benchmark output labels each sample with its mode:
-
-```text
-- state (public): ...
-- state-dispatched (dispatch): ...
-- state-detect-heavy (detect): ...
-- Mode summary
-- public: ...
-- dispatch: ...
-- detect: ...
-```
+Atelier is maintained by Simon André. Sharing the package or
+[starring it on GitHub](https://github.com/ateliersvg/diagram) helps more than you would think.
 
 ## License
 
-MIT.
+Atelier Diagram is released under the [MIT License](LICENSE).
