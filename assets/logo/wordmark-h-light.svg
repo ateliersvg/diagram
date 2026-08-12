@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492 96" width="492" height="96">
+  <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00b0fc"/><stop offset="100%" stop-color="#5e4da1"/></linearGradient></defs>
+
+  <rect width="492" height="96" fill="#fdfaf3"/>
+  <text x="32" y="60" font-family="system-ui, -apple-system, sans-serif" font-size="32" letter-spacing="7" xml:space="preserve"><tspan font-weight="200" fill="#7a6a5a">ATELIER </tspan><tspan font-weight="300" fill="url(#g)">\</tspan><tspan font-weight="400" fill="#1c1c24"> DIAGRAM</tspan></text>
+</svg>
