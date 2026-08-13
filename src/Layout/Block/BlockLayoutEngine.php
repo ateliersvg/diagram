@@ -59,7 +59,7 @@ final class BlockLayoutEngine
         $su = $theme->spacingUnit;
         $margin = 4.0 * $su;
         $hasRelationshipLabels = [] !== array_filter($diagram->relationships, static fn (BlockRelationship $relationship): bool => null !== $relationship->label);
-        $gap = ($hasRelationshipLabels ? 12.0 : 5.0) * $su;
+        $gap = ($hasRelationshipLabels ? 16.0 : 5.0) * $su;
         $titleHeight = $this->titles->blockHeight($diagram->title, $theme);
 
         $sizes = [];
@@ -67,7 +67,7 @@ final class BlockLayoutEngine
             $labelMetrics = $this->measurer->measureLine($node->label, $theme->fontSize, FontWeight::Bold);
             $idMetrics = $this->measurer->measureLine($node->id, 0.82 * $theme->fontSize);
             $sizes[$node->id] = [
-                'w' => max(13.0 * $su, max($labelMetrics->width, $idMetrics->width) + 4.0 * $su),
+                'w' => max(15.0 * $su, 1.12 * max($labelMetrics->width, $idMetrics->width) + 4.0 * $su),
                 'h' => $labelMetrics->height + $idMetrics->height + 3.6 * $su,
             ];
         }
@@ -89,7 +89,14 @@ final class BlockLayoutEngine
         $grid = Grid::columns('blocks', $columns)
             ->gap($gap)
             ->align(Alignment::Center, Alignment::Center);
-        foreach ($diagram->nodes as $node) {
+        $layoutNodes = $diagram->nodes;
+        if (3 === $columns && \count($layoutNodes) >= 3) {
+            // Put the first, usually root, block in the middle of the first
+            // row. Its fan-out can then reach both neighbours without passing
+            // through the block between them.
+            [$layoutNodes[0], $layoutNodes[1]] = [$layoutNodes[1], $layoutNodes[0]];
+        }
+        foreach ($layoutNodes as $node) {
             $grid = $grid->add(Frame::preferred('block.'.$node->id, $sizes[$node->id]['w'], $sizes[$node->id]['h']));
         }
 

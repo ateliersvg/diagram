@@ -13,6 +13,7 @@ use Atelier\Diagram\Layout\Block\BlockLayoutEngine;
 use Atelier\Diagram\Model\LineStyle;
 use Atelier\Diagram\Renderer\Svg\SvgRenderer;
 use Atelier\Diagram\Scene\RectNode;
+use Atelier\Diagram\Scene\TextNode;
 use Atelier\Diagram\Theme\Theme;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -67,5 +68,19 @@ final class BlockLayoutEngineTest extends TestCase
         $this->assertStringContainsString('LayoutSolver', $svg);
         $this->assertStringContainsString('Primitives', $svg);
         $this->assertStringContainsString('solves', $svg);
+    }
+
+    public function testRootBlockIsCentredBetweenItsFirstRowTargets(): void
+    {
+        require_once dirname(__DIR__, 3).'/examples/block-diagram.php';
+        $scene = (new BlockLayoutEngine())->layout(buildBlockDiagram(), Theme::default());
+        $texts = array_values(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode));
+        $positions = [];
+        foreach ($texts as $text) {
+            $positions[$text->text] = $text->x;
+        }
+
+        $this->assertLessThan($positions['LayoutSolver'], $positions['Grid']);
+        $this->assertGreaterThan($positions['LayoutSolver'], $positions['TextBlock']);
     }
 }

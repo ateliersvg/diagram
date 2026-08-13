@@ -55,8 +55,8 @@ final class C4LayoutEngine
         $su = $theme->spacingUnit;
         $margin = 4.0 * $su;
         $hasRelationshipLabels = [] !== array_filter($diagram->relationships, static fn (C4Relationship $relationship): bool => '' !== $relationship->label->text);
-        $boundaryGap = ($hasRelationshipLabels ? 18.0 : 4.0) * $su;
-        $nodeGap = ($hasRelationshipLabels ? 10.0 : 2.0) * $su;
+        $boundaryGap = ($hasRelationshipLabels ? 24.0 : 4.0) * $su;
+        $nodeGap = ($hasRelationshipLabels ? 20.0 : 2.0) * $su;
         $boundaryPadding = ($hasRelationshipLabels ? 3.0 : 2.0) * $su;
         $boundaryHeaderHeight = 3.5 * $su;
         $nodeHeight = ($hasRelationshipLabels ? 8.5 : 8.0) * $su;
@@ -69,7 +69,15 @@ final class C4LayoutEngine
         foreach ($diagram->elements as $element) {
             $labelWidth = $this->measurer->measureLine($element->label->text, $theme->fontSize, FontWeight::Bold)->width;
             $stereotypeWidth = $this->measurer->measureLine($this->stereotype($element), 0.76 * $theme->fontSize, FontWeight::Bold)->width;
-            $nodeWidths[$element->id] = max(19.0 * $su, $labelWidth + 4.0 * $su, $stereotypeWidth + 4.0 * $su);
+            $descriptionWidth = null === $element->description
+                ? 0.0
+                : $this->measurer->measureLine($element->description->text, 0.78 * $theme->fontSize)->width;
+            $nodeWidths[$element->id] = max(
+                22.0 * $su,
+                1.12 * $labelWidth + 4.0 * $su,
+                1.12 * $stereotypeWidth + 4.0 * $su,
+                1.12 * $descriptionWidth + 4.0 * $su,
+            );
         }
 
         /** @var array<string, array{width: float, height: float, cols: int, elements: list<C4Element>, label: string}> $boundaryPlans */
@@ -78,7 +86,10 @@ final class C4LayoutEngine
         $contentHeight = 0.0;
         foreach ($boundaryIds as $boundaryId) {
             $elements = $elementsByBoundary[$boundaryId] ?? [];
-            $cols = \count($elements) > 2 ? 2 : 1;
+            // External actors and systems form a single lane. Splitting them
+            // into two columns made long relationships from a boundary cross
+            // unrelated external elements on their way to the far column.
+            $cols = '' === $boundaryId ? 1 : (\count($elements) > 2 ? 2 : 1);
             $rows = (int) max(1, ceil(\count($elements) / $cols));
             $maxNodeWidth = 19.0 * $su;
             foreach ($elements as $element) {

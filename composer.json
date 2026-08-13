@@ -76,6 +76,7 @@
         "cs:fix": "vendor/bin/php-cs-fixer fix",
         "benchmark:parser": "php tools/benchmark-mermaid-parser.php",
         "label-polish": "php examples/label-polish.php",
+        "docs:figures": "php tools/generate-doc-figures.php",
         "showcase:page": "php examples/showcase-page.php",
         "diagnostics:update": "php tools/update-mermaid-diagnostic-snapshots.php",
         "parser": [
