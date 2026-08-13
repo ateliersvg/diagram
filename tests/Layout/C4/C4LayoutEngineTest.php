@@ -99,6 +99,52 @@ final class C4LayoutEngineTest extends TestCase
         $this->assertNotEmpty(array_filter($rects, static fn (RectNode $node): bool => $theme->nodeFillColor === $node->style->fill));
     }
 
+    public function testExternalElementsStayInOneLaneWhenRelationshipsAreLabelled(): void
+    {
+        $diagram = (new C4DiagramBuilder())
+            ->person('buyer', 'Buyer')
+            ->externalSystem('stripe', 'Stripe')
+            ->externalSystem('warehouse', 'Warehouse')
+            ->relationship('buyer', 'stripe', 'charges card')
+            ->relationship('buyer', 'warehouse', 'creates shipment')
+            ->build();
+
+        $scene = (new C4LayoutEngine())->layout($diagram, Theme::default());
+        $texts = array_values(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode));
+        $positions = [];
+        foreach ($texts as $text) {
+            if (\in_array($text->text, ['Buyer', 'Stripe', 'Warehouse'], true)) {
+                $positions[$text->text] = $text->x;
+            }
+        }
+
+        $this->assertSame($positions['Buyer'], $positions['Stripe']);
+        $this->assertSame($positions['Buyer'], $positions['Warehouse']);
+    }
+
+    public function testLabelledElementsReserveAFullRelationshipLabelLane(): void
+    {
+        $diagram = (new C4DiagramBuilder())
+            ->boundary('shop', 'Shop')
+                ->container('web', 'Web App', 'Symfony')
+                ->container('api', 'API', 'PHP')
+                ->database('db', 'Orders DB', 'PostgreSQL')
+            ->endBoundary()
+            ->relationship('web', 'api', 'submits checkout', 'HTTPS')
+            ->build();
+
+        $scene = (new C4LayoutEngine())->layout($diagram, Theme::default());
+        $texts = array_values(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode));
+        $positions = [];
+        foreach ($texts as $text) {
+            if (\in_array($text->text, ['Web App', 'API'], true)) {
+                $positions[$text->text] = $text->x;
+            }
+        }
+
+        $this->assertGreaterThan(300.0, $positions['API'] - $positions['Web App']);
+    }
+
     /**
      * @param list<object> $nodes
      */

@@ -12,6 +12,7 @@ use Atelier\Diagram\Scene\TextNode;
 use Atelier\Diagram\Theme\Theme;
 use Atelier\Layout\Alignment;
 use Atelier\Layout\Connection\ConnectionLabel;
+use Atelier\Layout\Connection\ConnectionLabelPlacement;
 use Atelier\Layout\Connection\OrthogonalConnection;
 use Atelier\Layout\Element\TextBlock;
 use Atelier\Layout\Geometry\Insets;
@@ -42,7 +43,10 @@ final readonly class ConnectionLabelArtist
 
     private const float MAX_WIDTH_UNITS = 12.0;
 
-    private const float LINE_HEIGHT = 1.18;
+    private const float LINE_HEIGHT = 1.5;
+
+    /** Browser system-font metrics are wider than CharWidthTextMeasurer. */
+    private const float TEXT_WIDTH_SAFETY_FACTOR = 1.3;
 
     public function __construct(
         private TextMeasurerInterface $textMeasurer,
@@ -58,23 +62,26 @@ final readonly class ConnectionLabelArtist
         RectIndex $avoidIndex,
         Theme $theme,
         TextStyle $textStyle,
+        ConnectionLabelPlacement $placement = ConnectionLabelPlacement::Centered,
     ): array {
         $unit = $theme->spacingUnit;
         $maxTextWidth = self::MAX_WIDTH_UNITS * $unit;
         $metrics = $this->textMeasurer->wrap($text, $maxTextWidth, $textStyle->fontSize, self::LINE_HEIGHT, true, $textStyle->fontWeight);
+        $safeTextWidth = min($maxTextWidth * self::TEXT_WIDTH_SAFETY_FACTOR, $metrics->width * self::TEXT_WIDTH_SAFETY_FACTOR);
         $placedLabel = ConnectionLabel::for($connection)
             ->size(new Size(
-                $metrics->width + 2.0 * self::HORIZONTAL_PADDING_UNITS * $unit,
+                $safeTextWidth + 2.0 * self::HORIZONTAL_PADDING_UNITS * $unit,
                 $metrics->height + 2.0 * self::VERTICAL_PADDING_UNITS * $unit,
             ))
             ->padding(Insets::all(self::AVOID_PADDING_UNITS * $unit))
+            ->placement($placement)
             ->avoid($avoidIndex)
             ->place();
 
         $textFrame = new Rect(
             $placedLabel->frame->x + self::HORIZONTAL_PADDING_UNITS * $unit,
             $placedLabel->frame->y + self::VERTICAL_PADDING_UNITS * $unit,
-            $metrics->width,
+            $safeTextWidth,
             $metrics->height,
         );
         $layout = TextBlock::of('connection.label', $text, $textStyle->fontSize)

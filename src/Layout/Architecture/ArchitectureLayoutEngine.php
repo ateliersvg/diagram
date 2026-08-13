@@ -58,7 +58,7 @@ final class ArchitectureLayoutEngine
         $nodeGap = ($hasRelationshipLabels ? 5.0 : 2.0) * $su;
         $groupPadding = 2.0 * $su;
         $groupHeaderHeight = 3.25 * $su;
-        $nodeHeight = 6.25 * $su;
+        $nodeHeight = 7.25 * $su;
         $titleBlockHeight = $this->titleArtist->blockHeight($diagram->title, $theme);
 
         $nodesByGroup = $this->nodesByGroup($diagram);
@@ -253,7 +253,7 @@ final class ArchitectureLayoutEngine
         $badgeWidth = min($frame->width - 1.4 * $theme->spacingUnit, $kindMetrics->width + 1.45 * $theme->spacingUnit);
         $badgeX = $frame->x + 0.7 * $theme->spacingUnit;
         $badgeY = $frame->y + 0.7 * $theme->spacingUnit;
-        $labelY = $frame->y + $frame->height - 1.45 * $theme->spacingUnit;
+        $labelY = $frame->y + $frame->height - 1.25 * $theme->spacingUnit;
 
         return [
             new RectNode($frame->x, $frame->y, $frame->width, $frame->height, $boxStyle, 5.0),

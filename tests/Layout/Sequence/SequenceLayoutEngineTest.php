@@ -92,4 +92,24 @@ final class SequenceLayoutEngineTest extends TestCase
         }
         $this->assertEmpty(array_filter($rects, static fn (RectNode $node): bool => '#f8fafc' === $node->style->fill));
     }
+
+    public function testFragmentAndBranchLabelsReserveSpaceBeforeMessages(): void
+    {
+        self::loadExample('sequence-workflow.php');
+
+        $scene = (new SequenceLayoutEngine())->layout(buildSequenceWorkflow(), Theme::default());
+        $texts = array_values(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode));
+
+        $byText = [];
+        foreach ($texts as $text) {
+            $byText[$text->text] = $text;
+        }
+
+        $this->assertArrayHasKey('manual review', $byText);
+        $this->assertArrayHasKey('Review order', $byText);
+        $this->assertGreaterThan(14.0, $byText['Review order']->y - $byText['manual review']->y);
+        $this->assertArrayHasKey('loop status polling', $byText);
+        $this->assertArrayHasKey('Show status', $byText);
+        $this->assertGreaterThan(14.0, $byText['Show status']->y - $byText['loop status polling']->y);
+    }
 }

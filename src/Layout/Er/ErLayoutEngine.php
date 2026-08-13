@@ -19,6 +19,7 @@ use Atelier\Diagram\Scene\Style\TextStyle;
 use Atelier\Diagram\Scene\TextNode;
 use Atelier\Diagram\Theme\Theme;
 use Atelier\Layout\Alignment;
+use Atelier\Layout\Connection\ConnectionLabelPlacement;
 use Atelier\Layout\Connection\OrthogonalConnection;
 use Atelier\Layout\Connection\OrthogonalConnector;
 use Atelier\Layout\Element\Frame;
@@ -49,11 +50,11 @@ final class ErLayoutEngine
         $su = $theme->spacingUnit;
         $margin = 4.0 * $su;
         $hasRelationshipLabels = [] !== array_filter($diagram->relationships, static fn (ErRelationship $relationship): bool => null !== $relationship->label);
-        $gap = ($hasRelationshipLabels ? 14.0 : 6.0) * $su;
+        $gap = ($hasRelationshipLabels ? 18.0 : 6.0) * $su;
         $headerHeight = 3.25 * $su;
         $rowHeight = 2.7 * $su;
         $paddingX = 1.5 * $su;
-        $columnGap = 1.5 * $su;
+        $columnGap = 2.5 * $su;
 
         $sizes = [];
         foreach ($diagram->entities as $entity) {
@@ -63,7 +64,10 @@ final class ErLayoutEngine
                 // so long names like "trackingNumber" never collide the type.
                 $nameWidth = $this->measurer->measureLine($attribute->name, 0.9 * $theme->fontSize)->width;
                 $typeWidth = $this->measurer->measureLine($attribute->type, 0.82 * $theme->fontSize)->width;
-                $width = max($width, $nameWidth + $columnGap + $typeWidth + 2.0 * $paddingX);
+                // Browser font metrics are wider than the deliberately cheap
+                // character-width estimator. Keep a small safety factor so
+                // the right-aligned type cannot run back into the name.
+                $width = max($width, 1.4 * ($nameWidth + $typeWidth) + $columnGap + 2.0 * $paddingX);
             }
             $sizes[$entity->id] = [
                 'w' => $width,
@@ -107,15 +111,27 @@ final class ErLayoutEngine
 
         /** @var list<NodeInterface> $nodes */
         $nodes = [];
-        $labelAvoidIndex = RectIndex::from($frames);
+        $labelAvoidRects = $frames;
+        $labelAvoidIndex = RectIndex::from($labelAvoidRects);
         /** @var list<NodeInterface> $relationshipLabelNodes */
         $relationshipLabelNodes = [];
+        $relationshipIndex = 0;
         foreach ($diagram->relationships as $relationship) {
             $nodes = [...$nodes, ...$this->relationshipNodes($relationship, $frames, $labelAvoidIndex, $theme, false)];
-            $relationshipLabelNodes = [
-                ...$relationshipLabelNodes,
-                ...$this->relationshipNodes($relationship, $frames, $labelAvoidIndex, $theme, true),
-            ];
+            $labels = $this->relationshipNodes($relationship, $frames, $labelAvoidIndex, $theme, true, $relationshipIndex);
+            $relationshipLabelNodes = [...$relationshipLabelNodes, ...$labels];
+            foreach ($labels as $index => $labelNode) {
+                if ($labelNode instanceof RectNode) {
+                    $labelAvoidRects['relationship.label.'.\count($relationshipLabelNodes).'.'.$index] = new Rect(
+                        $labelNode->x,
+                        $labelNode->y,
+                        $labelNode->width,
+                        $labelNode->height,
+                    );
+                }
+            }
+            $labelAvoidIndex = RectIndex::from($labelAvoidRects);
+            ++$relationshipIndex;
         }
 
         $boxStyle = new ShapeStyle($theme->nodeFillColor, $theme->nodeStrokeColor, $theme->strokeWidth);
@@ -152,7 +168,7 @@ final class ErLayoutEngine
      *
      * @return list<NodeInterface>
      */
-    private function relationshipNodes(ErRelationship $relationship, array $frames, RectIndex $labelAvoidIndex, Theme $theme, bool $labelsOnly): array
+    private function relationshipNodes(ErRelationship $relationship, array $frames, RectIndex $labelAvoidIndex, Theme $theme, bool $labelsOnly, int $relationshipIndex = 0): array
     {
         $from = $frames[$relationship->from];
         $to = $frames[$relationship->to];
@@ -176,7 +192,14 @@ final class ErLayoutEngine
                 $labelStyle = new TextStyle($theme->fontFamily, 0.85 * $theme->fontSize, FontWeight::Normal, TextAnchor::Middle, $theme->textColor);
                 $nodes = [
                     ...$nodes,
-                    ...$this->connectionLabels->nodes($relationship->label->text, $connection, $labelAvoidIndex, $theme, $labelStyle),
+                    ...$this->connectionLabels->nodes(
+                        $relationship->label->text,
+                        $connection,
+                        $labelAvoidIndex,
+                        $theme,
+                        $labelStyle,
+                        0 === $relationshipIndex % 2 ? ConnectionLabelPlacement::Above : ConnectionLabelPlacement::Below,
+                    ),
                 ];
             }
 

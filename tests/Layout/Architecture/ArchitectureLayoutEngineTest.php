@@ -107,4 +107,18 @@ final class ArchitectureLayoutEngineTest extends TestCase
         $this->assertNotEmpty(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode && 'Ungrouped' === $node->text));
         $this->assertNotEmpty(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode && 'Standalone service' === $node->text));
     }
+
+    public function testKindBadgeAndNodeLabelUseSeparateVerticalBands(): void
+    {
+        $diagram = (new ArchitectureDiagramBuilder())
+            ->component('App', 'Frontend app')
+            ->build();
+
+        $scene = (new ArchitectureLayoutEngine())->layout($diagram, Theme::default());
+        $texts = array_values(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode));
+        $badge = array_values(array_filter($texts, static fn (TextNode $node): bool => 'COMPONENT' === $node->text))[0];
+        $label = array_values(array_filter($texts, static fn (TextNode $node): bool => 'Frontend app' === $node->text))[0];
+
+        $this->assertGreaterThan(22.0, $label->y - $badge->y);
+    }
 }

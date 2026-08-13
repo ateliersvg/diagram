@@ -51,7 +51,7 @@ final class RequirementLayoutEngine
     {
         $su = $theme->spacingUnit;
         $margin = 4.0 * $su;
-        $groupGap = 7.0 * $su;
+        $groupGap = 12.0 * $su;
         $nodeGap = 3.0 * $su;
         $headerHeight = 5.0 * $su;
         $rowHeight = 2.8 * $su;
@@ -234,10 +234,10 @@ final class RequirementLayoutEngine
     private function fieldPreferredWidth(RequirementNode $node, Theme $theme, float $paddingX): float
     {
         $width = 0.0;
+        $nameColumnWidth = $this->fieldNameColumnWidth($node, $theme);
         foreach ($node->fields as $name => $value) {
-            $nameWidth = $this->measurer->measureLine($name, 0.85 * $theme->fontSize, FontWeight::Bold)->width;
-            $valueWidth = min(20.0 * $theme->spacingUnit, $this->measurer->measureLine($value, 0.85 * $theme->fontSize)->width);
-            $width = max($width, $nameWidth + 0.75 * $theme->spacingUnit + $valueWidth + 2.0 * $paddingX);
+            $valueWidth = min(20.0 * $theme->spacingUnit, 1.15 * $this->measurer->measureLine($value, 0.85 * $theme->fontSize)->width);
+            $width = max($width, $nameColumnWidth + 1.5 * $theme->spacingUnit + $valueWidth + 2.0 * $paddingX);
         }
 
         return $width;
@@ -260,9 +260,10 @@ final class RequirementLayoutEngine
         }
 
         $rows = [];
+        $nameColumnWidth = $this->fieldNameColumnWidth($node, $theme);
         foreach ($node->fields as $name => $value) {
-            $nameWidth = $this->measurer->measureLine($name, 0.85 * $theme->fontSize, FontWeight::Bold)->width;
-            $valueWidth = max(4.0 * $theme->spacingUnit, $width - 2.0 * $paddingX - $nameWidth - 0.75 * $theme->spacingUnit);
+            $nameWidth = $nameColumnWidth;
+            $valueWidth = max(4.0 * $theme->spacingUnit, $width - 2.0 * $paddingX - $nameWidth - 1.5 * $theme->spacingUnit);
             $block = $this->measurer->wrap($value, $valueWidth, 0.85 * $theme->fontSize, 1.18, true);
             $valueHeight = max($rowHeight - 1.1 * $theme->spacingUnit, $block->height);
             $rows[] = [
@@ -276,6 +277,19 @@ final class RequirementLayoutEngine
         }
 
         return $rows;
+    }
+
+    private function fieldNameColumnWidth(RequirementNode $node, Theme $theme): float
+    {
+        $width = 0.0;
+        foreach (array_keys($node->fields) as $name) {
+            $width = max(
+                $width,
+                1.5 * $this->measurer->measureLine($name.':', 0.85 * $theme->fontSize, FontWeight::Bold)->width,
+            );
+        }
+
+        return $width;
     }
 
     /**

@@ -74,6 +74,30 @@ final class SequenceLayoutEngine
             $labelLayout = $this->wrappedTextLayout('sequence.message.'.$index, $message->label, $messageLabelWidth, $messageTextStyle->fontSize, FontWeight::Normal, 1.16, $context);
             $messageRowHeights[$index] = max(4.4 * $su, $labelLayout->contentHeight + 2.8 * $su);
         }
+
+        // Fragment and branch labels occupy a header band before the first
+        // message in their range. Without that reserve, labels such as
+        // "loop status polling" and "Show status" are painted on top of one
+        // another even though their individual text metrics are correct.
+        $messageRowHeaderReserves = array_fill(0, $rowCount, 0.0);
+        foreach ($diagram->blocks as $block) {
+            $messageRowHeaderReserves[$block->firstMessageIndex] = max(
+                $messageRowHeaderReserves[$block->firstMessageIndex] ?? 0.0,
+                2.75 * $su,
+            );
+            foreach ($block->branches as $branch) {
+                if ($branch->firstMessageIndex === $block->firstMessageIndex) {
+                    continue;
+                }
+                $messageRowHeaderReserves[$branch->firstMessageIndex] = max(
+                    $messageRowHeaderReserves[$branch->firstMessageIndex] ?? 0.0,
+                    2.5 * $su,
+                );
+            }
+        }
+        foreach ($messageRowHeights as $index => $rowHeight) {
+            $messageRowHeights[$index] = $rowHeight + ($messageRowHeaderReserves[$index] ?? 0.0);
+        }
         $messageRowsHeight = [] === $messageRowHeights ? 4.4 * $su : array_sum($messageRowHeights);
         $messageLabelReserve = $this->messageLabelReserve($diagram, $theme, $messageLabelWidth, $context);
 
@@ -118,8 +142,9 @@ final class SequenceLayoutEngine
         $messageCursor = $lifelineTop + $messageTopGap;
         for ($index = 0; $index < $rowCount; ++$index) {
             $rowHeight = $messageRowHeights[$index] ?? 4.4 * $su;
+            $headerReserve = $messageRowHeaderReserves[$index] ?? 0.0;
             $messageTopEdges[$index] = $messageCursor;
-            $messageCenters[$index] = $messageCursor + $rowHeight / 2.0;
+            $messageCenters[$index] = $messageCursor + $headerReserve + ($rowHeight - $headerReserve) / 2.0;
             $messageBottomEdges[$index] = $messageCursor + $rowHeight;
             $messageCursor += $rowHeight;
         }
@@ -148,7 +173,7 @@ final class SequenceLayoutEngine
         $blockStyle = new ShapeStyle(null, $theme->mutedTextColor, $theme->strokeWidth, opacity: 0.85);
         $blockTextStyle = new TextStyle($theme->fontFamily, 0.82 * $fontSize, FontWeight::Bold, TextAnchor::Start, $theme->mutedTextColor);
         foreach ($diagram->blocks as $block) {
-            $top = ($messageTopEdges[$block->firstMessageIndex] ?? $lifelineTop + $messageTopGap) - 1.2 * $su;
+            $top = $messageTopEdges[$block->firstMessageIndex] ?? $lifelineTop + $messageTopGap;
             $bottom = ($messageBottomEdges[$block->lastMessageIndex] ?? $top + 4.4 * $su) + 1.2 * $su;
             $nodes[] = new RectNode($margin + $su, $top, $width - 2.0 * ($margin + $su), $bottom - $top, $blockStyle, 6.0);
             $label = $block->kind->value.' '.$block->label;
@@ -159,7 +184,7 @@ final class SequenceLayoutEngine
                 if ($branch->firstMessageIndex === $block->firstMessageIndex) {
                     continue;
                 }
-                $separatorY = ($messageTopEdges[$branch->firstMessageIndex] ?? $top) - 0.4 * $su;
+                $separatorY = ($messageTopEdges[$branch->firstMessageIndex] ?? $top) + 0.9 * $su;
                 $nodes[] = new LineNode(
                     $margin + 1.5 * $su,
                     $separatorY,

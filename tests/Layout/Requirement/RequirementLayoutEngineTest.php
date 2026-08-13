@@ -102,4 +102,18 @@ final class RequirementLayoutEngineTest extends TestCase
         $this->assertNotEmpty(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode && 'requirement' === $node->text));
         $this->assertNotEmpty(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode && 'element' === $node->text));
     }
+
+    public function testLongFieldNameReservesSpaceBeforeItsValue(): void
+    {
+        $diagram = (new RequirementDiagramBuilder())
+            ->requirement('checkout', ['verifymethod' => 'inspection'])
+            ->build();
+
+        $scene = (new RequirementLayoutEngine())->layout($diagram, Theme::default());
+        $texts = array_values(array_filter($scene->nodes, static fn ($node): bool => $node instanceof TextNode));
+        $name = array_values(array_filter($texts, static fn (TextNode $node): bool => 'verifymethod:' === $node->text))[0];
+        $value = array_values(array_filter($texts, static fn (TextNode $node): bool => 'inspection' === $node->text))[0];
+
+        $this->assertGreaterThan(115.0, $value->x - $name->x);
+    }
 }
