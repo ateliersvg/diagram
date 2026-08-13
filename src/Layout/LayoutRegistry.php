@@ -14,6 +14,7 @@ use Atelier\Diagram\Flow\Flowchart;
 use Atelier\Diagram\Git\GitGraph;
 use Atelier\Diagram\Journey\JourneyDiagram;
 use Atelier\Diagram\Kanban\KanbanDiagram;
+use Atelier\Diagram\Layout\Support\ThemeTextMeasurer;
 use Atelier\Diagram\Mindmap\MindmapDiagram;
 use Atelier\Diagram\Model\DiagramModel;
 use Atelier\Diagram\Requirement\RequirementDiagram;
@@ -67,21 +68,21 @@ final readonly class LayoutRegistry
     private static function buildDefault(): self
     {
         return new self([
-            new LayoutHandler(StateDiagram::class, static fn (StateDiagram $diagram, Theme $theme): Scene => (new State\StateLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(VennDiagram::class, static fn (VennDiagram $diagram, Theme $theme): Scene => (new Venn\VennLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(GitGraph::class, static fn (GitGraph $graph, Theme $theme): Scene => (new Git\GitLayoutEngine())->layout($graph, $theme)),
-            new LayoutHandler(SequenceDiagram::class, static fn (SequenceDiagram $diagram, Theme $theme): Scene => (new Sequence\SequenceLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(Flowchart::class, static fn (Flowchart $flowchart, Theme $theme): Scene => (new Flow\FlowchartLayoutEngine())->layout($flowchart, $theme)),
-            new LayoutHandler(ClassDiagramModel::class, static fn (ClassDiagramModel $diagram, Theme $theme): Scene => (new ClassDiagram\ClassDiagramLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(ErDiagram::class, static fn (ErDiagram $diagram, Theme $theme): Scene => (new Er\ErLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(TimelineDiagram::class, static fn (TimelineDiagram $diagram, Theme $theme): Scene => (new Timeline\TimelineLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(JourneyDiagram::class, static fn (JourneyDiagram $diagram, Theme $theme): Scene => (new Journey\JourneyLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(MindmapDiagram::class, static fn (MindmapDiagram $diagram, Theme $theme): Scene => (new Mindmap\MindmapLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(RequirementDiagram::class, static fn (RequirementDiagram $diagram, Theme $theme): Scene => (new Requirement\RequirementLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(KanbanDiagram::class, static fn (KanbanDiagram $diagram, Theme $theme): Scene => (new Kanban\KanbanLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(BlockDiagram::class, static fn (BlockDiagram $diagram, Theme $theme): Scene => (new Block\BlockLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(ArchitectureDiagram::class, static fn (ArchitectureDiagram $diagram, Theme $theme): Scene => (new Architecture\ArchitectureLayoutEngine())->layout($diagram, $theme)),
-            new LayoutHandler(C4Diagram::class, static fn (C4Diagram $diagram, Theme $theme): Scene => (new C4\C4LayoutEngine())->layout($diagram, $theme)),
+            new LayoutHandler(StateDiagram::class, static fn (StateDiagram $diagram, Theme $theme): Scene => (new State\StateLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(VennDiagram::class, static fn (VennDiagram $diagram, Theme $theme): Scene => (new Venn\VennLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(GitGraph::class, static fn (GitGraph $graph, Theme $theme): Scene => (new Git\GitLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($graph, $theme)),
+            new LayoutHandler(SequenceDiagram::class, static fn (SequenceDiagram $diagram, Theme $theme): Scene => (new Sequence\SequenceLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(Flowchart::class, static fn (Flowchart $flowchart, Theme $theme): Scene => (new Flow\FlowchartLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($flowchart, $theme)),
+            new LayoutHandler(ClassDiagramModel::class, static fn (ClassDiagramModel $diagram, Theme $theme): Scene => (new ClassDiagram\ClassDiagramLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(ErDiagram::class, static fn (ErDiagram $diagram, Theme $theme): Scene => (new Er\ErLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(TimelineDiagram::class, static fn (TimelineDiagram $diagram, Theme $theme): Scene => (new Timeline\TimelineLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(JourneyDiagram::class, static fn (JourneyDiagram $diagram, Theme $theme): Scene => (new Journey\JourneyLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(MindmapDiagram::class, static fn (MindmapDiagram $diagram, Theme $theme): Scene => (new Mindmap\MindmapLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(RequirementDiagram::class, static fn (RequirementDiagram $diagram, Theme $theme): Scene => (new Requirement\RequirementLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(KanbanDiagram::class, static fn (KanbanDiagram $diagram, Theme $theme): Scene => (new Kanban\KanbanLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(BlockDiagram::class, static fn (BlockDiagram $diagram, Theme $theme): Scene => (new Block\BlockLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(ArchitectureDiagram::class, static fn (ArchitectureDiagram $diagram, Theme $theme): Scene => (new Architecture\ArchitectureLayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
+            new LayoutHandler(C4Diagram::class, static fn (C4Diagram $diagram, Theme $theme): Scene => (new C4\C4LayoutEngine(ThemeTextMeasurer::for($theme)))->layout($diagram, $theme)),
         ]);
     }
 
