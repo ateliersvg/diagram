@@ -3,7 +3,7 @@
     "description": "PHP library for modeling, parsing, rendering, and round-tripping diagrams as SVG and Mermaid",
     "license": "MIT",
     "type": "library",
-    "homepage": "https://github.com/ateliersvg/diagram",
+    "homepage": "https://ateliersvg.com/diagram/",
     "keywords": [
         "diagram",
         "chart",
@@ -36,7 +36,8 @@
     "authors": [
         {
             "name": "Simon André",
-            "email": "smn.andre@gmail.com"
+            "email": "smn.andre@gmail.com",
+            "homepage": "https://smnandre.dev"
         }
     ],
     "minimum-stability": "stable",
@@ -70,26 +71,13 @@
         "sort-packages": true
     },
     "scripts": {
-        "corpus": "php tools/verify-mermaid-corpus.php",
-        "coverage": "vendor/bin/phpunit --coverage-text",
         "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff --sequential",
         "cs:fix": "vendor/bin/php-cs-fixer fix",
-        "benchmark:parser": "php tools/benchmark-mermaid-parser.php",
-        "label-polish": "php examples/label-polish.php",
-        "docs:figures": "php tools/generate-doc-figures.php",
-        "showcase:page": "php examples/showcase-page.php",
-        "diagnostics:update": "php tools/update-mermaid-diagnostic-snapshots.php",
-        "parser": [
-            "@corpus",
-            "@rules",
-            "vendor/bin/phpunit tests/Parser"
-        ],
         "qa": [
             "@cs",
             "@sa",
             "@test"
         ],
-        "rules": "php tools/verify-parser-rules.php",
         "sa": "vendor/bin/phpstan analyse --memory-limit=-1",
         "test": "vendor/bin/phpunit"
     }
