@@ -6,7 +6,10 @@ title: Kanban
 
 A kanban board is a set of ordered columns, each holding an ordered stack of cards laid out left to right in source order.
 
+<figure class="diagram-intro">
 <img src="../images/kanban-diagram.svg" alt="A kanban board with columns and cards">
+<figcaption>Ordered columns containing ordered stacks of cards.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -61,10 +64,32 @@ $diagram = Diagram::kanban()
 Diagram::of($diagram)->saveSvg('kanban.svg');
 ```
 
-- `title($text)` - sets a title (not part of the Mermaid grammar; dropped on serialization).
-- `column($id, $label)` - declares a column. Throws `InvalidArgumentException` on an empty label or a duplicate id.
-- `card($columnId, $id, $label)` - appends a card to an existing column. Throws `InvalidArgumentException` when the column is unknown or the card id is a duplicate.
-- `build()` - throws `InvalidArgumentException` when no column was declared.
+`title()`
+: Sets a title. It is dropped during serialization because the Mermaid grammar has no place for it.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Non-empty title. |
+
+`column()`
+: Declares a column. Empty labels and duplicate ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique column identifier. |
+  | `$label` | `string` | Display label. |
+
+`card()`
+: Appends a card to an existing column. Unknown columns and duplicate card ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$columnId` | `string` | Existing column identifier. |
+  | `$id` | `string` | Unique card identifier. |
+  | `$label` | `string` | Card label. |
+
+`build()`
+: Assembles the immutable `KanbanDiagram`. A diagram without columns throws.
 
 ## Options
 
@@ -87,7 +112,7 @@ All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutr
 
 <img src="../images/kanban-diagram-theme.svg" alt="The same board in the blueprint preset">
 
-`Theme::blueprint()` on the same columns. Column width comes from the layout engine, not the theme, so the board keeps its proportions.
+`Theme::blueprint()` changes the palette while preserving the board's column widths.
 
 ## Parse
 

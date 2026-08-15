@@ -5,8 +5,6 @@ order: 20
 
 Fifteen types, each with a fluent PHP builder, a layout engine, and an SVG renderer. All of them except Venn also parse a Mermaid subset and render canonical Mermaid back.
 
-Every figure below is generated from the type's own documented example, so what you see is what the code in that page produces.
-
 <div class="figure-grid">
 <figure><a href="flowchart.md"><img src="../images/flowchart.svg" alt="A deployment workflow flowing from top to bottom"></a><figcaption><a href="flowchart.md">Flowchart</a></figcaption></figure>
 <figure><a href="state-diagram.md"><img src="../images/state-diagram.svg" alt="A state machine for an order"></a><figcaption><a href="state-diagram.md">State</a></figcaption></figure>
@@ -25,8 +23,5 @@ Every figure below is generated from the type's own documented example, so what 
 <figure><a href="c4-diagram.md"><img src="../images/c4-diagram.svg" alt="A C4 diagram with systems and people"></a><figcaption><a href="c4-diagram.md">C4</a></figcaption></figure>
 </div>
 
-## Which One Parses Mermaid
-
-Fourteen of the fifteen accept a Mermaid subset. Venn has none, because Mermaid itself has no Venn diagram: it is built through the PHP builder only.
 
 Each type page names its header keyword and links the exact grammar it accepts. The full table lives in [Mermaid support](../mermaid.md).

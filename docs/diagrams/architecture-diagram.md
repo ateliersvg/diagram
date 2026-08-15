@@ -6,7 +6,10 @@ title: Architecture
 
 An architecture diagram is a set of typed nodes, optional groups that zone them, and directed relationships between nodes.
 
+<figure class="diagram-intro">
 <img src="../images/architecture-diagram.svg" alt="An architecture diagram with grouped services and their links">
+<figcaption>Typed architecture nodes grouped into zones and connected by directed relationships.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -57,12 +60,51 @@ $diagram = Diagram::architecture()
 Diagram::of($diagram)->saveSvg('architecture.svg');
 ```
 
-- `title($text)` - sets a title. Non-empty; optional.
-- `group($id, $label)` - declares a group lane. The id must be a supported identifier; the label defaults to the id. Duplicate ids throw.
-- `person($id, $label, $groupId)` / `system(...)` / `container(...)` / `component(...)` / `database(...)` / `queue(...)` / `external(...)` - declare a node of that kind. The label defaults to the id; `groupId` must reference a declared group. Duplicate node ids throw.
-- `node($kind, $id, $label, $groupId)` - the generic form; `$kind` is a token string or an `ArchitectureNodeKind`. The typed methods above delegate to it.
-- `relationship($from, $to, $label)` - adds a directed relationship. Both endpoints must be declared nodes; the label is optional.
-- `build()` - assembles the model in declaration order. The builder validates eagerly (unknown group, unknown relationship endpoint, duplicate id, bad identifier all throw `InvalidArgumentException` at call time).
+`title()`
+: Sets an optional, non-empty title.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Diagram title. |
+
+`group()`
+: Declares a group lane. Duplicate ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique group identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`person()` / `system()` / `container()` / `component()` / `database()` / `queue()` / `external()`
+: Declares a node of the selected kind. Duplicate ids and unknown groups throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique node identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$groupId` | `?string` | Existing group identifier. |
+
+`node()`
+: Calls the generic form behind the typed node helpers.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$kind` | `string\|ArchitectureNodeKind` | Node kind token or enum case. |
+  | `$id` | `string` | Unique node identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$groupId` | `?string` | Existing group identifier. |
+
+`relationship()`
+: Adds a directed relationship. Both endpoints must already be declared.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Existing source node identifier. |
+  | `$to` | `string` | Existing target node identifier. |
+  | `$label` | `?string` | Optional relationship label. |
+
+`build()`
+: Assembles the immutable `ArchitectureDiagram` in declaration order. Validation is eager, so invalid identifiers, duplicate ids, unknown groups, and unknown endpoints throw when declared.
 
 ## Options
 
@@ -84,7 +126,7 @@ All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutr
 
 <img src="../images/architecture-diagram-theme.svg" alt="The same architecture in the blueprint preset">
 
-`Theme::blueprint()` on the same services. Group boundaries and node shapes are model concerns; only the palette moved.
+`Theme::blueprint()` gives the same services a deep canvas with high-contrast group boundaries.
 
 ## Parse
 

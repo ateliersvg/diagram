@@ -6,7 +6,10 @@ title: Git graph
 
 A git graph is a commit history: branches in creation order, commits in operation order, and merge commits that join two parents.
 
+<figure class="diagram-intro">
 <img src="../images/git-graph.svg" alt="A branching git history with commits, branches, and a merge">
+<figcaption>A commit history with branches, tags, and merges.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -62,14 +65,54 @@ $diagram = Diagram::git()
 Diagram::of($diagram)->saveSvg('history.svg');
 ```
 
-- `commit($id, $tag)` - records a commit on the current branch. Omitted ids are auto-generated as deterministic 7-character hashes, so identical operation sequences build identical graphs. Duplicate ids throw `InvalidDiagramException`.
-- `branch($name)` - creates a branch at the current tip and checks it out, like `git checkout -b`. Existing names throw.
-- `checkout($name)` - switches the current branch; unknown names throw.
-- `merge($name)` - records a merge commit on the current branch with two parents (current tip first, merged tip second). Merging an unknown branch, a commitless branch, into a commitless branch, or a branch into itself throws.
-- `direction($direction)` - `Direction::LeftToRight` (default) or `Direction::TopToBottom`.
-- `title($text)` - sets a title (not part of the Mermaid grammar; dropped on serialization).
-- `withoutLegend()` - disables the automatic branch-to-color legend (enabled by default).
-- `build()` - returns the immutable `GitGraph`.
+`commit()`
+: Records a commit on the current branch. Omitted ids become deterministic seven-character hashes; duplicate ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `?string` | Commit id; generated when omitted. |
+  | `$tag` | `?string` | Optional tag. |
+
+`branch()`
+: Creates a branch at the current tip and checks it out. Existing names throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$name` | `string` | New branch name. |
+
+`checkout()`
+: Switches the current branch. Unknown names throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$name` | `string` | Existing branch name. |
+
+`merge()`
+: Records a two-parent merge commit on the current branch. Invalid or empty branch states throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$name` | `string` | Existing branch to merge. |
+
+`direction()`
+: Sets the commit axis direction.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$direction` | `Direction` | `LeftToRight` by default, or `TopToBottom`. |
+
+`title()`
+: Sets a title. It is dropped during serialization because the Mermaid grammar has no place for it.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$title` | `string` | Non-empty title. |
+
+`withoutLegend()`
+: Disables the automatic branch-to-color legend, which is enabled by default.
+
+`build()`
+: Assembles the immutable `GitGraph`.
 
 ## Options
 

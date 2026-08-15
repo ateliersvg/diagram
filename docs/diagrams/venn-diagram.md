@@ -6,7 +6,10 @@ title: Venn
 
 A Venn diagram is 2 or 3 overlapping sets with an optional title, optional region labels, and an optional legend.
 
+<figure class="diagram-intro">
 <img src="../images/venn-diagram.svg" alt="Three overlapping sets with labelled regions">
+<figcaption>Three overlapping sets with labels for each region.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -48,15 +51,56 @@ $diagram = Diagram::venn()
 Diagram::of($diagram)->saveSvg('skills.svg');
 ```
 
-- `set($label, $cardinality)` - adds a set (first call is A, second B, third C); the fourth call throws `InvalidDiagramException`. Cardinality is optional and ignored by the schematic layout.
-- `regionLabel($region, $text)` - labels a region; last call wins per region. Unknown region keys throw immediately; references to undeclared sets (e.g. `BC` in a 2-set diagram) are checked on `build()`.
-- `title($text)` - sets a title (not part of any text form).
-- `withLegend()` - opts in to a set-to-color legend (off by default).
-- `targetSize($width, $height)` - constrains the schematic into an exact canvas.
-- `paddingPercent($percent)` - reserves outer canvas padding, resolved from the target size.
-- `innerPaddingPercent($percent)` - reserves label padding inside each circle safe area.
-- `circleStrokeWidth($px)` - draws a fixed-width contained circle stroke.
-- `build()` - throws `InvalidDiagramException` for fewer than 2 sets or a region referencing an undeclared set.
+`set()`
+: Adds set A, B, then C. A fourth set throws; cardinality is optional and does not affect schematic layout.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$label` | `string` | Set label. |
+  | `$cardinality` | `?int` | Optional displayed cardinality. |
+
+`regionLabel()`
+: Labels a region; the last call wins. Invalid regions throw immediately, while references to undeclared sets are checked at `build()`.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$region` | `string` | `A`, `B`, `C`, `AB`, `AC`, `BC`, or `ABC`. |
+  | `$text` | `string` | Region label. |
+
+`title()`
+: Sets a title. Venn has no Mermaid text form.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$title` | `string` | Non-empty title. |
+
+`withLegend()`
+: Enables the set-to-color legend, which is off by default.
+
+`targetSize()`
+: Constrains the schematic to an exact canvas.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$width` | `float` | Canvas width. |
+  | `$height` | `float` | Canvas height. |
+
+`paddingPercent()` / `innerPaddingPercent()`
+: Sets outer canvas padding or label padding inside each circle's safe area.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$percent` | `float` | Padding as a percentage. |
+
+`circleStrokeWidth()`
+: Sets the contained circle stroke width.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$strokeWidth` | `float` | Stroke width in SVG units. |
+
+`build()`
+: Assembles the immutable `VennDiagram`. Fewer than two sets or labels that reference undeclared sets throw.
 
 ## Options
 

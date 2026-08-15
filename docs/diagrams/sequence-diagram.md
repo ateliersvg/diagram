@@ -6,7 +6,10 @@ title: Sequence
 
 A sequence diagram is a set of participants and the ordered messages exchanged between them over time, with optional activation bars and grouping blocks.
 
+<figure class="diagram-intro">
 <img src="../images/sequence-diagram.svg" alt="A sequence diagram with participants, messages, and activation bars">
+<figcaption>Participants exchanging ordered messages over time.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -74,19 +77,60 @@ $diagram = Diagram::sequence()
 Diagram::of($diagram)->saveSvg('checkout.svg');
 ```
 
-- `title($text)` - sets a title (serialized to Mermaid, unlike most other types).
-- `participant($id, $label)` - declares a participant; the label defaults to the id. Re-declaring an id throws.
-- `message($from, $to, $label, $arrow)` - adds a message and auto-declares unknown endpoints with the id as label (Mermaid behavior). `$arrow` is `MessageArrow::Solid` (default) or `MessageArrow::Dashed`.
-- `block($kind, $label, $firstMessageIndex, $lastMessageIndex, $branches)` - groups a range of messages by their indices under a `SequenceBlockKind` (`Loop`, `Alt`, `Opt`, `Par`), with optional `SequenceBlockBranch` list.
-- `activate($participant)` / `deactivate($participant)` - open and close an activation bar. `activate` must follow a message and throws if the participant is already active; `deactivate` throws if it is not active. Bars still open at `build()` are closed at the last message.
-- `messageCount()` - returns the number of messages added so far (useful for computing block index ranges).
-- `build()` - throws `InvalidArgumentException` when no participant was declared.
+`title()`
+: Sets a title serialized to Mermaid.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Non-empty title. |
+
+`participant()`
+: Declares a participant. Re-declaring an id throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique participant identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`message()`
+: Adds a message and auto-declares unknown endpoints.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source participant identifier. |
+  | `$to` | `string` | Target participant identifier. |
+  | `$label` | `string` | Message label. |
+  | `$arrow` | `MessageArrow` | `Solid` by default, or `Dashed`. |
+
+`block()`
+: Groups a message range as `Loop`, `Alt`, `Opt`, or `Par`, with optional branches.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$kind` | `SequenceBlockKind` | Block kind. |
+  | `$label` | `string` | Block label. |
+  | `$firstMessageIndex` | `int` | First included message index. |
+  | `$lastMessageIndex` | `int` | Last included message index. |
+  | `$branches` | `list<SequenceBlockBranch>` | Optional branch definitions. |
+
+`activate()` / `deactivate()`
+: Opens or closes an activation bar. Invalid activation state throws; bars left open at `build()` close at the last message.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$participant` | `string` | Participant identifier. |
+
+`messageCount()`
+: Returns the current message count for computing block index ranges.
+
+`build()`
+: Assembles the immutable `SequenceDiagram`. A diagram without participants throws.
 
 ## Options
 
 | Setting | Default | Effect |
 |---|---|---|
-| `title(string)` | none | heading; survives serialization, unlike most types |
+| `title(string)` | none | heading included in Mermaid serialization |
 | `block(kind, label, first, last, branches)` | none | frames a contiguous message range; branches split it |
 | `activate()` / `deactivate()` | none | activation bars over a lifeline |
 
@@ -96,7 +140,7 @@ Diagram::of($diagram)->saveSvg('checkout.svg');
 
 ## Themes
 
-Sequence diagrams use `nodeFillColor` and `nodeStrokeColor` for participant headers and activation bars, `nodeStrokeColor` for message lines and arrowheads, `mutedTextColor` for lifelines and block frames, `textColor` for message labels, and `backgroundColor` behind label halos. They do **not** use `accentColors` (every participant and message is styled uniformly), so the palette size does not matter here. Block frames are unfilled outlines stroked with `mutedTextColor`, so they sit cleanly on any preset.
+Sequence diagrams use `nodeFillColor` and `nodeStrokeColor` for participant headers and activation bars, `nodeStrokeColor` for message lines and arrowheads, `mutedTextColor` for lifelines and block frames, `textColor` for message labels, and `backgroundColor` behind label halos. Block frames are unfilled outlines stroked with `mutedTextColor`, so they sit cleanly on any preset.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`); no `Scene\BackgroundPattern` is drawn for this type. See [Theming](../theming.md).
 
@@ -113,7 +157,7 @@ $diagram = Diagram::fromMermaid($source);        // throws ParseException
 $result  = Diagram::tryFromMermaid($source);      // non-throwing ParseResult
 ```
 
-`toMermaid()` / `toMarkdown()` serialize a built model back. Sequence titles are serialized (unlike state and most other types). Blocks and activations round-trip canonically. Full grammar and round-trip rules: [Mermaid support](../mermaid.md#sequence-diagram-subset).
+`toMermaid()` / `toMarkdown()` serialize titles, blocks, and activations in canonical form. Full grammar and round-trip rules: [Mermaid support](../mermaid.md#sequence-diagram-subset).
 
 ## Debug
 

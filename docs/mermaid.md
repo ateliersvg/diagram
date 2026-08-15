@@ -4,7 +4,7 @@ title: Mermaid
 ---
 # Mermaid Support
 
-`atelier/diagram` parses Mermaid-like grammars including `stateDiagram-v2`, `gitGraph`, `sequenceDiagram`, `flowchart`, `classDiagram`, `erDiagram`, `timeline`, `journey`, `mindmap`, `requirementDiagram`, `kanban`, `block`, `architecture`, `C4Context`, `C4Container`, and `C4Component`. The supported subsets are deliberately small, exactly specified, and symmetric: everything the parser accepts, the [markdown renderer](renderers.md) emits, and round-trip tests hold both sides to it. Venn diagrams currently have no text form in this package. Each subset below builds the model its own [diagram type page](diagrams/overview.md) documents.
+`atelier/diagram` parses Mermaid-like grammars including `stateDiagram-v2`, `gitGraph`, `sequenceDiagram`, `flowchart`, `classDiagram`, `erDiagram`, `timeline`, `journey`, `mindmap`, `requirementDiagram`, `kanban`, `block`, `architecture`, `C4Context`, `C4Container`, and `C4Component`. The supported subsets are deliberately small, exactly specified, and symmetric: everything the parser accepts can be emitted back by the [markdown renderer](renderers.md). Venn diagrams have no text form in this package. Each subset below builds the model its own [diagram type page](diagrams/overview.md) documents.
 
 ## Parsing
 
@@ -17,7 +17,7 @@ $svg = $diagram->toSvg();
 
 `Diagram::fromMermaid()` (backed by `Parser\MermaidParser`) dispatches on the first significant line through `Parser\MermaidGrammarRegistry`: `stateDiagram-v2` or `stateDiagram` selects the state parser, `gitGraph` the git parser, `sequenceDiagram` the sequence parser, `flowchart` the flowchart parser, `classDiagram` the class parser, `erDiagram` the ER parser, `timeline` the timeline parser, `journey` the journey parser, `mindmap` the mindmap parser, `requirementDiagram` the requirement parser, `kanban` the kanban parser, `block` the block parser, `architecture` the architecture parser, and `C4Context`, `C4Container`, or `C4Component` the C4 parser. Anything else throws a `ParseException` at line 1. All grammars skip blank lines and `%%` comment lines. Most grammars ignore indentation; `mindmap` and `kanban` use strict indentation because indentation is part of their structure.
 
-State, git graph, sequence, flowchart, and class are the mature textual grammars. They carry the highest expectations for parser clarity, canonical Mermaid output, layout polish, and documentation. The other textual grammars are supported but earlier: they fail loudly on unsupported syntax and keep intentionally smaller subsets while the shared layout layer matures.
+Every grammar accepts only the statements documented below. Unsupported syntax raises a `ParseException` instead of being skipped, and supported models serialize back to canonical Mermaid.
 
 ## State diagram subset
 
@@ -95,7 +95,7 @@ Header: `classDiagram`. Then:
 | `User --> Order` | directed relation; endpoints are auto-declared |
 | `User --> Order : places` | labeled directed relation |
 
-Class ids match `[A-Za-z_][A-Za-z0-9_]*`. Everything else is rejected for now: inheritance arrows, visibility parsing, methods as structured members, annotations, namespaces, and class blocks.
+Class ids match `[A-Za-z_][A-Za-z0-9_]*`. The supported subset does not include inheritance arrows, visibility parsing, methods as structured members, annotations, namespaces, or class blocks.
 
 ## ER diagram subset
 
@@ -107,7 +107,7 @@ Header: `erDiagram`. Then:
 | `ORDER {` ... `}` | entity block |
 | `int id` | attribute row (`type name`) inside an entity block |
 
-Cardinality tokens are `\|o` (zero or one), `\|\|` (exactly one), `o{` (zero or more), and `\|{` (one or more); the pair is written `<left>--<right>`. Entity ids match `[A-Za-z_][A-Za-z0-9_]*`. Everything else is rejected for now: identifying/non-identifying styling, attribute keys and comments, quoted labels, and alias blocks.
+Cardinality tokens are `\|o` (zero or one), `\|\|` (exactly one), `o{` (zero or more), and `\|{` (one or more); the pair is written `<left>--<right>`. Entity ids match `[A-Za-z_][A-Za-z0-9_]*`. The supported subset does not include identifying/non-identifying styling, attribute keys and comments, quoted labels, or alias blocks.
 
 ## Timeline subset
 
@@ -119,7 +119,7 @@ Header: `timeline`. Then:
 | `section Discovery` | starts a named horizontal lane |
 | `Research complete : 2026-01` | event label and date label in the current section |
 
-Events must belong to an explicit section. Date values are labels in v0: they are not parsed, sorted, scaled, or treated as durations. Everything else is rejected for now: calendar scaling, range bars, nested phases, styling, and date arithmetic.
+Events must belong to an explicit section. Date values are free-text labels: they are not parsed, sorted, scaled, or treated as durations. The supported subset does not include calendar scaling, range bars, nested phases, styling, or date arithmetic.
 
 ## Journey diagram subset
 
@@ -144,7 +144,7 @@ Header: `mindmap`. Then:
 | `  Layout` | child of the previous shallower node |
 | `    Grid` | grandchild, two spaces deeper |
 
-The v0 parser requires spaces only, exactly two spaces per level, one root, and no skipped indentation levels. Unsupported Mermaid mindmap features are rejected for now: icons, classes, markdown labels, arbitrary shapes, and multiple roots.
+The parser requires spaces only, exactly two spaces per level, one root, and no skipped indentation levels. The supported subset does not include icons, classes, markdown labels, arbitrary shapes, or multiple roots.
 
 ## Requirement diagram subset
 
@@ -157,7 +157,7 @@ Header: `requirementDiagram`. Then:
 | `id: REQ-1` | simple key/value field inside a node block |
 | `cart - satisfies -> checkout` | typed relationship |
 
-Relationship kinds are validated: `contains`, `copies`, `derives`, `satisfies`, `verifies`, `refines`, and `traces`. Full SysML requirement semantics, nested packages, quoted rich fields, and generated IDs are intentionally out of scope for v0.
+Relationship kinds are validated: `contains`, `copies`, `derives`, `satisfies`, `verifies`, `refines`, and `traces`. The supported subset does not include full SysML requirement semantics, nested packages, quoted rich fields, or generated IDs.
 
 ## Kanban subset
 
@@ -169,7 +169,7 @@ Header: `kanban`. Then:
 | `    todo [Todo]` | column declaration, indented by 4 spaces |
 | `        REQ-1 [Write parser]` | card in the current column, indented by 8 spaces |
 
-Columns and cards render in source order. Column/card ids match `[A-Za-z_][A-Za-z0-9_-]*`; labels are bracket text and cannot contain `]` in v0. Unsupported board features are rejected for now: WIP limits, tags, assignees, priorities, swimlanes, and nested card metadata.
+Columns and cards render in source order. Column/card ids match `[A-Za-z_][A-Za-z0-9_-]*`; labels are bracket text and cannot contain `]`. The supported subset does not include WIP limits, tags, assignees, priorities, swimlanes, or nested card metadata.
 
 ## Block diagram subset
 
@@ -183,7 +183,7 @@ Header: `block`. Then:
 | `Solver -> Grid` | directed relationship |
 | `Solver -> Text : measures` | labeled directed relationship |
 
-Blocks and relationships render in source order. Block and group ids match `[A-Za-z_][A-Za-z0-9_]*`; labels are bracket text and cannot contain `]` in v0. Unsupported features are rejected for now: nested groups, ports, alternate shapes, style directives, manual coordinates, and automatic graph solving.
+Blocks and relationships render in source order. Block and group ids match `[A-Za-z_][A-Za-z0-9_]*`; labels are bracket text and cannot contain `]`. The supported subset does not include nested groups, ports, alternate shapes, style directives, manual coordinates, or automatic graph solving.
 
 ## Architecture subset
 
@@ -197,7 +197,7 @@ Header: `architecture`. Then:
 | `database Orders [Orders DB]` | database node declaration |
 | `App -> Api : calls` | directed relationship with optional label |
 
-Supported node kinds are `person`, `system`, `container`, `component`, `database`, `queue`, and `external`. Group and node ids match `[A-Za-z_][A-Za-z0-9_]*`. Labels are bracket text and cannot contain `]` in v0. Full C4 semantics, icons, deployment nodes, nested arbitrary containers, and indentation-derived hierarchy are intentionally out of scope for v0.
+Supported node kinds are `person`, `system`, `container`, `component`, `database`, `queue`, and `external`. Group and node ids match `[A-Za-z_][A-Za-z0-9_]*`. Labels are bracket text and cannot contain `]`. The supported subset does not include full C4 semantics, icons, deployment nodes, nested arbitrary containers, or indentation-derived hierarchy.
 
 ## C4 subset
 
@@ -217,7 +217,7 @@ Headers: `C4Context`, `C4Container`, or `C4Component`. Then:
 | `ComponentDb(store, "Order Store", "PostgreSQL")` | component database |
 | `Rel(web, api, "calls", "HTTPS")` | directed relationship with optional technology |
 
-Element and boundary ids match `[A-Za-z_][A-Za-z0-9_]*`. Text fields are quoted, cannot contain quotes or newlines, and are emitted canonically by `toMermaid()`. Unsupported C4 features are rejected for now: nested boundaries, deployment nodes, dynamic views, sprites, tags, links, styling macros, layout directives, and macros outside the subset above.
+Element and boundary ids match `[A-Za-z_][A-Za-z0-9_]*`. Text fields are quoted, cannot contain quotes or newlines, and are emitted canonically by `toMermaid()`. The supported subset does not include nested boundaries, deployment nodes, dynamic views, sprites, tags, links, styling macros, layout directives, or macros outside the subset above.
 
 ## Debugging
 
@@ -249,7 +249,7 @@ knows the offending line. `Parser\Support\ParserDiagnosticCode` is the source
 of truth for known parser codes; it includes header errors, unsupported syntax,
 semantic builder failures, empty labels/blocks/branches, indentation errors,
 branch context errors, and unclosed block spans. The text message remains the
-compatibility surface; diagnostics are the path for future CLI/editor output.
+compatibility surface; structured diagnostics are suitable for CLI and editor output.
 
 For human-facing tools, `Parser\Support\ParserDiagnosticFormatter` renders the
 same diagnostic as a compact code frame:

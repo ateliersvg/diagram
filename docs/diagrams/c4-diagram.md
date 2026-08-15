@@ -6,7 +6,10 @@ title: C4
 
 A C4 diagram models software architecture as people, systems, containers, and components, grouped into boundaries and joined by directed relationships.
 
+<figure class="diagram-intro">
 <img src="../images/c4-diagram.svg" alt="A C4 diagram showing systems, people, and their relationships">
+<figcaption>People, systems, containers, and their directed relationships.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -70,17 +73,93 @@ $diagram = Diagram::c4()
 Diagram::of($diagram)->saveSvg('out.svg');
 ```
 
-- `contextView()` / `containerView()` / `componentView()` - set the view level (`C4Context` / `C4Container` / `C4Component`). `view(C4View)` is the underlying setter; the default is context.
-- `title($text)` - sets a title (dropped on serialization; the grammar has no place for it).
-- `boundary($id, $label)` - opens a one-level boundary. Elements declared after it land inside until `endBoundary()`. Duplicate boundary ids throw.
-- `endBoundary()` - closes the current boundary. Throws if none is open.
-- `person($id, $label, $description, $boundaryId)` / `externalPerson(...)` - declare a person (`Person` / `Person_Ext`).
-- `system(...)` / `externalSystem(...)` - declare a software system (`System` / `System_Ext`).
-- `container($id, $label, $technology, $description, $boundaryId)` / `externalContainer(...)` / `database(...)` - declare a container, external container, or container database (`Container` / `Container_Ext` / `ContainerDb`).
-- `component(...)` / `externalComponent(...)` / `componentDatabase(...)` - declare a component, external component, or component database (`Component` / `Component_Ext` / `ComponentDb`).
-- `element(C4ElementKind, $id, $label, $technology, $description, $boundaryId)` - the generic form the typed helpers call. Duplicate element ids and unknown `boundaryId` throw.
-- `relationship($from, $to, $label, $technology)` - adds a directed relationship. Both endpoints must already be declared, or it throws.
-- `build()` - assembles the immutable `C4Diagram` in declaration order.
+`contextView()` / `containerView()` / `componentView()`
+: Set the view level (`C4Context` / `C4Container` / `C4Component`). `view(C4View)` is the underlying setter; the default is context.
+
+`title()`
+: Sets a title. It is dropped during serialization because the grammar has no place for it.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Non-empty title. |
+
+`boundary()`
+: Opens a one-level boundary. Elements declared after it land inside until `endBoundary()`. Duplicate boundary ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique boundary identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`endBoundary()`
+: Closes the current boundary. Throws if none is open.
+
+`person()` / `externalPerson()`
+: Declares a person (`Person` / `Person_Ext`).
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique element identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$description` | `?string` | Optional secondary text. |
+  | `$boundaryId` | `?string` | Known boundary; defaults to the current boundary. |
+
+`system()` / `externalSystem()`
+: Declares a software system (`System` / `System_Ext`).
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique element identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$description` | `?string` | Optional secondary text. |
+  | `$boundaryId` | `?string` | Known boundary; defaults to the current boundary. |
+
+`container()` / `externalContainer()` / `database()`
+: Declares a container, external container, or container database (`Container` / `Container_Ext` / `ContainerDb`).
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique element identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$technology` | `?string` | Optional technology label. |
+  | `$description` | `?string` | Optional secondary text. |
+  | `$boundaryId` | `?string` | Known boundary; defaults to the current boundary. |
+
+`component()` / `externalComponent()` / `componentDatabase()`
+: Declares a component, external component, or component database (`Component` / `Component_Ext` / `ComponentDb`).
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique element identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$technology` | `?string` | Optional technology label. |
+  | `$description` | `?string` | Optional secondary text. |
+  | `$boundaryId` | `?string` | Known boundary; defaults to the current boundary. |
+
+`element()`
+: Calls the generic form behind the typed helpers. Duplicate element ids and unknown `boundaryId` values throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$kind` | `C4ElementKind` | Element notation kind. |
+  | `$id` | `string` | Unique element identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+  | `$technology` | `?string` | Optional technology label. |
+  | `$description` | `?string` | Optional secondary text. |
+  | `$boundaryId` | `?string` | Known boundary; defaults to the current boundary. |
+
+`relationship()`
+: Adds a directed relationship. Both endpoints must already be declared, or it throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Existing source element identifier. |
+  | `$to` | `string` | Existing target element identifier. |
+  | `$label` | `string` | Non-empty relationship label. |
+  | `$technology` | `?string` | Optional technology label. |
+
+`build()`
+: Assembles the immutable `C4Diagram` in declaration order.
 
 ## Options
 
@@ -104,7 +183,7 @@ From the theme the layout also reads `fontFamily`, `fontSize`, `textColor`, and 
 
 <img src="../images/c4-diagram-theme.svg" alt="The same C4 view in the neutral preset">
 
-`Theme::neutral()` on the same view. C4 leans on shape and boundary rather than hue, so it survives the quietest preset.
+`Theme::neutral()` keeps the view legible by relying on element shapes and boundaries rather than hue.
 
 ## Parse
 

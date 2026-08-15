@@ -6,7 +6,10 @@ title: Class
 
 A class diagram is a set of named class boxes, each holding member rows, plus the directed relations between them.
 
+<figure class="diagram-intro">
 <img src="../images/class-diagram.svg" alt="A class diagram with members and relations">
+<figcaption>Classes, their members, and the relations between them.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -55,10 +58,32 @@ $diagram = Diagram::classDiagram()
 Diagram::of($diagram)->saveSvg('classes.svg');
 ```
 
-- `class($id)` - declares a class. Declaring an existing id again is a no-op. An empty id throws `InvalidArgumentException`.
-- `member($classId, $text)` - appends a member row and auto-declares the class if unseen. Declaration order is the layout tie-breaker.
-- `relation($from, $to, $label)` - adds a directed relation and auto-declares unknown endpoints. `$label` is optional.
-- `build()` - assembles the classes in declaration order; returns a `ClassDiagram`.
+`class()`
+: Declares a class. Repeating an id is a no-op; an empty id throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Class identifier. |
+
+`member()`
+: Appends a member row and auto-declares the class if unseen. Declaration order is the layout tie-breaker.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$classId` | `string` | Owning class identifier. |
+  | `$text` | `string` | Member row text. |
+
+`relation()`
+: Adds a directed relation and auto-declares unknown endpoints.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source class identifier. |
+  | `$to` | `string` | Target class identifier. |
+  | `$label` | `?string` | Optional relation label. |
+
+`build()`
+: Assembles the immutable `ClassDiagram` in declaration order.
 
 ## Options
 
@@ -69,17 +94,17 @@ Diagram::of($diagram)->saveSvg('classes.svg');
 
 - **Determinism**: layout is source-order based and deterministic; the same model always yields the same SVG.
 
-`Layout\ClassDiagram\ClassDiagramLayoutEngine` places class boxes in a source-order grid and routes relations with `atelier/layout` orthogonal ports. Class names and member rows are bounded and wrapped, so long labels do not force unusable boxes. Relation labels use the shared route-label treatment: centered on the route, wrapped when needed, and drawn over a light background so the edge stays readable. Graph ranking, inheritance-specific arrowheads, compartments beyond member rows, and full relation collision solving are later work.
+`Layout\ClassDiagram\ClassDiagramLayoutEngine` places class boxes in a source-order grid and routes relations with `atelier/layout` orthogonal ports. Class names and member rows are bounded and wrapped, so long labels do not force unusable boxes. Relation labels are centered on the route, wrapped when needed, and drawn over a background halo so the edge stays readable.
 
 ## Themes
 
-Class diagrams use `nodeFillColor` and `nodeStrokeColor` for the boxes and their row separators, `nodeStrokeColor` for relation edges and arrowheads, and `textColor` for class names and member rows. They do **not** use `accentColors` (every box is styled uniformly), so the palette size does not matter here.
+Class diagrams use `nodeFillColor` and `nodeStrokeColor` for the boxes and their row separators, `nodeStrokeColor` for relation edges and arrowheads, and `textColor` for class names and member rows.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`), and a `Scene\BackgroundPattern` (as in `blueprint()`) sits behind the boxes. See [Theming](../theming.md).
 
 <img src="../images/class-diagram-theme.svg" alt="The same class diagram in the blueprint preset">
 
-`Theme::blueprint()`: deep navy field, cyan strokes, thin lines. The model is untouched; only the theme passed to `toSvg()` changed.
+Pass `Theme::blueprint()` to `toSvg()` for a deep navy canvas with thin cyan strokes.
 
 ## Parse
 

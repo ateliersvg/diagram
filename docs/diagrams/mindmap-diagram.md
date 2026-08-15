@@ -6,7 +6,10 @@ title: Mindmap
 
 A mindmap is one rooted tree: a central idea, its branches, and the child nodes stacked beneath them.
 
+<figure class="diagram-intro">
 <img src="../images/mindmap-diagram.svg" alt="A mindmap branching from a central root">
+<figcaption>A rooted hierarchy branching from one central idea.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -59,9 +62,25 @@ $diagram = Diagram::mindmap()
 Diagram::of($diagram)->saveSvg('mindmap.svg');
 ```
 
-- `root($label, $id = null)` - sets the single root. The id is auto-generated when omitted. Throws `InvalidArgumentException` if a root already exists, or if the label is empty.
-- `child($parentId, $label, $id = null)` - adds a node under an existing parent id (declaration order is the stacking order). The id is auto-generated when omitted. Throws `InvalidArgumentException` when the parent is unknown, the label is empty, or the id is a duplicate.
-- `build()` - throws `InvalidArgumentException` when no root was declared.
+`root()`
+: Sets the single root. A second root or an empty label throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$label` | `string` | Root label. |
+  | `$id` | `?string` | Root identifier; generated when omitted. |
+
+`child()`
+: Adds a node under an existing parent. Declaration order is the stacking order; invalid parents, labels, or duplicate ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$parentId` | `string` | Existing parent identifier. |
+  | `$label` | `string` | Child label. |
+  | `$id` | `?string` | Child identifier; generated when omitted. |
+
+`build()`
+: Assembles the immutable `MindmapDiagram`. A missing root throws.
 
 ## Options
 
@@ -79,7 +98,7 @@ There is no direction or title knob: the tree always lays out left-to-right and 
 
 ## Themes
 
-`accentColors` is indexed by depth, cycled with a modulo so it never overflows the palette. In the current layout only the root (depth 0, so `accentColors[0]`) uses its accent, filled and stroked with it and given white label text. Deeper nodes render with `nodeFillColor` and `nodeStrokeColor`, `textColor` labels, and `nodeStrokeColor` connectors.
+The root uses `accentColors[0]` for its fill and stroke, with white label text. Deeper nodes use `nodeFillColor` and `nodeStrokeColor`, `textColor` labels, and `nodeStrokeColor` connectors.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`). See [Theming](../theming.md).
 

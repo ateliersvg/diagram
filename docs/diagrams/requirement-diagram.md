@@ -6,7 +6,10 @@ title: Requirement
 
 A requirement diagram is a small SysML-like view: requirement blocks, implementation or verification elements, and typed relationships between them.
 
+<figure class="diagram-intro">
 <img src="../images/requirement-diagram.svg" alt="A requirement diagram with requirements, elements, and relationships">
+<figcaption>Requirements, implementation elements, and typed relationships.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -65,12 +68,43 @@ $diagram = Diagram::requirement()
 Diagram::of($diagram)->saveSvg('requirements.svg');
 ```
 
-- `requirement($id, $fields)` - declares a requirement node with optional field map. Re-declaring an existing id merges fields; declaring the same id as a different kind throws `InvalidArgumentException`.
-- `element($id, $fields)` - declares an element node the same way.
-- `node($id, $kind, $fields)` - the shared primitive behind both; `$kind` is a `RequirementNodeKind` or its keyword string.
-- `field($nodeId, $name, $value)` - adds or overrides one field on a declared node. Throws on an unknown node, a non-identifier name, or an empty value.
-- `relationship($from, $kind, $to)` - adds a typed relationship; `$kind` is a `RequirementRelationshipKind` or one of the seven keyword strings.
-- `build()` - assembles the immutable `RequirementDiagram` (fields render in declaration order).
+`requirement()` / `element()`
+: Declares a node of the selected kind with an optional field map. Re-declaration merges fields; changing an existing node's kind throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique node identifier. |
+  | `$fields` | `array<string, string>` | Initial fields; defaults to an empty map. |
+
+`node()`
+: Calls the generic form behind `requirement()` and `element()`.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique node identifier. |
+  | `$kind` | `RequirementNodeKind\|string` | Node kind enum case or keyword. |
+  | `$fields` | `array<string, string>` | Initial fields; defaults to an empty map. |
+
+`field()`
+: Adds or replaces one field on a declared node. Unknown nodes, invalid names, and empty values throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$nodeId` | `string` | Existing node identifier. |
+  | `$name` | `string` | Field name. |
+  | `$value` | `string` | Non-empty field value. |
+
+`relationship()`
+: Adds a typed relationship between nodes.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source node identifier. |
+  | `$kind` | `RequirementRelationshipKind\|string` | Relationship enum case or keyword. |
+  | `$to` | `string` | Target node identifier. |
+
+`build()`
+: Assembles the immutable `RequirementDiagram`; fields retain declaration order.
 
 ## Options
 

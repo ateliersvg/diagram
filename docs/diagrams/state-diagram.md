@@ -6,7 +6,10 @@ title: State
 
 A state diagram is a set of named states and the labeled transitions between them, plus the initial and final pseudo-states.
 
+<figure class="diagram-intro">
 <img src="../images/state-diagram.svg" alt="A state machine for an order, flowing from top to bottom">
+<figcaption>States connected by labeled transitions and terminal nodes.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -61,12 +64,46 @@ $diagram = Diagram::state()
 Diagram::of($diagram)->saveSvg('order.svg');
 ```
 
-- `state($id, $label)` - declares a state. Re-declaring an existing id with a label overrides it; without a label it is a no-op.
-- `transition($from, $to, $label)` - adds a transition and auto-declares unknown endpoints with the id as label (Mermaid behavior). Declaration order is the layout tie-breaker.
-- `initial($to)` / `final($from)` - add transitions from/to the pseudo-states `StateDiagram::INITIAL` / `StateDiagram::FINAL`. These ids cannot be declared as regular states; transitions cannot start at FINAL or end at INITIAL.
-- `direction($direction)` - `Direction::TopToBottom` (default) or `Direction::LeftToRight`.
-- `title($text)` - sets a title (not part of the Mermaid grammar; dropped on serialization).
-- `build()` - throws `InvalidDiagramException` when no state was declared.
+`state()`
+: Declares a state. Re-declaring it with a label replaces that label; without one it is a no-op.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | State identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`transition()`
+: Adds a transition and auto-declares unknown endpoints. Declaration order is the layout tie-breaker.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source state identifier. |
+  | `$to` | `string` | Target state identifier. |
+  | `$label` | `?string` | Optional transition label. |
+
+`initial()` / `final()`
+: Adds a transition from or to the reserved pseudo-state. Reserved ids cannot be regular states.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$to` / `$from` | `string` | State connected to the pseudo-state. |
+
+`direction()`
+: Sets the flow direction.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$direction` | `Direction` | `TopToBottom` by default, or `LeftToRight`. |
+
+`title()`
+: Sets a title. It is dropped during serialization because the Mermaid grammar has no place for it.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$title` | `string` | Non-empty title. |
+
+`build()`
+: Assembles the immutable `StateDiagram`. A diagram without states throws.
 
 ## Options
 
@@ -86,7 +123,7 @@ Diagram::of($diagram)->saveSvg('order.svg');
 
 ## Themes
 
-State diagrams use `nodeFillColor` and `nodeStrokeColor` for the state boxes, `nodeStrokeColor` for edges and the pseudo-states, `textColor` for labels, and `mutedTextColor` for edge-label halos. They do **not** use `accentColors` (every state is styled uniformly), so the palette size does not matter here.
+State diagrams use `nodeFillColor` and `nodeStrokeColor` for the state boxes, `nodeStrokeColor` for edges and the pseudo-states, `textColor` for labels, and `mutedTextColor` for edge-label halos.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`), and a `Scene\BackgroundPattern` (as in `blueprint()`) sits behind the states. See [Theming](../theming.md).
 

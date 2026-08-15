@@ -2,17 +2,9 @@
 
 This fixture matrix is the cross-grammar contract for Mermaid parsing.
 
-Run `composer parser` after parser changes. It runs the corpus verifier, parser
-rule verifier, and parser PHPUnit suite.
-
-Run `composer corpus` after adding, renaming, or deleting a fixture. It checks
-metadata, required files, orphan directories, expected model classes, diagnostic
-metadata, known diagnostic codes, and minimum accepted/rejected coverage for
-every registered grammar.
-
-Run `composer diagnostics:update` when a parser change intentionally changes a
-human-readable rejected diagnostic. Review the `rejected-diagnostics.txt` diff
-as parser UX, not as incidental test output.
+Run `vendor/bin/phpunit tests/Parser` after parser changes and after adding,
+renaming, or deleting a fixture. Review changes to
+`rejected-diagnostics.txt` as parser UX, not as incidental test output.
 
 Every grammar must have:
 

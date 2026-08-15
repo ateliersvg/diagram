@@ -6,7 +6,10 @@ title: ER
 
 An entity-relationship diagram is a set of entities with typed attribute rows and the labeled relationships between them, each end carrying a cardinality.
 
+<figure class="diagram-intro">
 <img src="../images/er-diagram.svg" alt="An entity relationship diagram with attributes and cardinalities">
+<figcaption>Entities, typed attributes, relationships, and cardinalities.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -53,10 +56,35 @@ $diagram = Diagram::er()
 Diagram::of($diagram)->saveSvg('schema.svg');
 ```
 
-- `entity($id)` - declares an entity with no attributes; a no-op if it already exists. Throws `InvalidArgumentException` on an empty id.
-- `attribute($entityId, $type, $name)` - appends a `type name` row, auto-declaring the entity on first use. Rows keep insertion order.
-- `relationship($from, $fromCardinality, $to, $toCardinality, $label = null)` - adds a relationship, auto-declaring both endpoints. Cardinalities accept a token string (`'||'`, `'o{'`, ...) or an `ErCardinality` case; an unknown token throws `InvalidArgumentException`.
-- `build()` - assembles the `ErDiagram` in entity declaration order.
+`entity()`
+: Declares an entity without attributes. Repeating an id is a no-op; an empty id throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Entity identifier. |
+
+`attribute()`
+: Appends a `type name` row, auto-declaring the entity on first use. Rows keep insertion order.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$entityId` | `string` | Owning entity identifier. |
+  | `$type` | `string` | Attribute type. |
+  | `$name` | `string` | Attribute name. |
+
+`relationship()`
+: Adds a relationship and auto-declares both endpoints. Unknown cardinality tokens throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source entity identifier. |
+  | `$fromCardinality` | `string\|ErCardinality` | Source cardinality token or enum case. |
+  | `$to` | `string` | Target entity identifier. |
+  | `$toCardinality` | `string\|ErCardinality` | Target cardinality token or enum case. |
+  | `$label` | `?string` | Optional relationship label. |
+
+`build()`
+: Assembles the immutable `ErDiagram` in entity declaration order.
 
 ## Options
 
@@ -72,7 +100,7 @@ Diagram::of($diagram)->saveSvg('schema.svg');
 
 ## Themes
 
-ER diagrams use `nodeFillColor` and `nodeStrokeColor` for entity boxes and connectors, `textColor` for attribute names, and `mutedTextColor` for attribute types. The entity header bar is filled with `accentColors[0]` with white title text, so only the first accent color matters; the palette size does not change the rendering.
+ER diagrams use `nodeFillColor` and `nodeStrokeColor` for entity boxes and connectors, `textColor` for attribute names, and `mutedTextColor` for attribute types. Entity headers use `accentColors[0]` with white title text.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`), and a `Scene\BackgroundPattern` (as in `blueprint()`) sits behind the entities. See [Theming](../theming.md).
 

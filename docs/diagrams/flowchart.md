@@ -6,7 +6,10 @@ title: Flowchart
 
 A flowchart is a set of rectangular nodes connected by directed, optionally labeled edges, with optional subgraph clusters grouping related nodes.
 
+<figure class="diagram-intro">
 <img src="../images/flowchart.svg" alt="A deployment workflow flowing from top to bottom">
+<figcaption>A directed workflow with labeled nodes, edges, and subgraphs.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -59,33 +62,71 @@ $diagram = Diagram::flowchart()
 Diagram::of($diagram)->saveSvg('checkout.svg');
 ```
 
-- `node($id, $label)` - declares a node; the label defaults to the id. Re-declaring an id replaces its label.
-- `edge($from, $to, $label)` - adds a directed edge and auto-declares unknown endpoints with the id as label (Mermaid behavior). A later `node()` call can replace an auto-declared label.
-- `subgraph($id, $label, $nodeIds, $parentId, $depth)` - groups nodes into a cluster; pass `$parentId` and `$depth` to nest.
-- `direction($direction)` - `Direction::TopToBottom` (default) or `Direction::LeftToRight`.
-- `title($text)` - sets a title (serialized as `title Text` in Mermaid output).
-- `build()` - throws `InvalidArgumentException` when no node was declared.
+`node()`
+: Declares a node. Re-declaring an id replaces its label.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Node identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`edge()`
+: Adds a directed edge and auto-declares unknown endpoints. A later `node()` call can replace an auto-declared label.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source node identifier. |
+  | `$to` | `string` | Target node identifier. |
+  | `$label` | `?string` | Optional edge label. |
+
+`subgraph()`
+: Groups nodes into a cluster. Parent and depth allow nested clusters.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Subgraph identifier. |
+  | `$label` | `string` | Display label. |
+  | `$nodeIds` | `non-empty-list<string>` | Member node identifiers. |
+  | `$parentId` | `?string` | Optional parent subgraph identifier. |
+  | `$depth` | `int` | Nesting depth; defaults to `0`. |
+
+`direction()`
+: Sets the flow direction.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$direction` | `Direction` | `TopToBottom` by default, or `LeftToRight`. |
+
+`title()`
+: Sets a title serialized as `title Text` in Mermaid output.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$title` | `string` | Non-empty title. |
+
+`build()`
+: Assembles the immutable `Flowchart`. An empty diagram throws.
 
 ## Options
 
 | Setting | Default | Effect |
 |---|---|---|
 | `direction(Direction)` | `TopToBottom` | serialized `TD`/`TB`, or `LR` for `LeftToRight` |
-| `title(string)` | none | heading; survives a Mermaid round-trip, unlike most types |
+| `title(string)` | none | heading included in Mermaid serialization |
 | `Theme::minNodeWidth` / `minNodeHeight` | `null` | floor for node boxes |
 
 - **Subgraph nesting**: subgraphs render as cluster boxes around their members and can nest via `$parentId` / `$depth`.
 - **Node labels are single-line**: labels are measured on one line (`measureLine`); they are not wrapped, so long labels widen the node.
 
-`Layout\Flow\FlowchartLayoutEngine` ranks nodes from edges, solves each rank on an `atelier/layout` grid, draws subgraphs as cluster boxes around their members, and routes edges as orthogonal paths with arrowheads. Edge labels sit over a background halo. This is a v1 engine meant to validate parser and layout responsibilities before a richer graph algorithm replaces it.
+`Layout\Flow\FlowchartLayoutEngine` ranks nodes from edges, solves each rank on an `atelier/layout` grid, draws subgraphs as cluster boxes around their members, and routes edges as orthogonal paths with arrowheads. Edge labels sit over a background halo.
 
 <img src="../images/flowchart-direction.svg" alt="The same workflow laid out from left to right">
 
-The same source with `flowchart LR` instead of `flowchart TD`. Nothing else changed: nodes, edges, and labels are identical.
+Use `flowchart LR` instead of `flowchart TD` to render the same nodes, edges, and labels from left to right.
 
 ## Themes
 
-Flowcharts use `nodeFillColor` and `nodeStrokeColor` for node boxes, `nodeStrokeColor` for edges and arrowheads, `textColor` for node labels, and `mutedTextColor` for cluster borders and cluster labels. They do **not** use `accentColors` (every node is styled uniformly), so the palette size does not matter here.
+Flowcharts use `nodeFillColor` and `nodeStrokeColor` for node boxes, `nodeStrokeColor` for edges and arrowheads, `textColor` for node labels, and `mutedTextColor` for cluster borders and cluster labels.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`). See [Theming](../theming.md).
 

@@ -51,9 +51,6 @@ $mermaid = $diagram->toMermaid();    // raw Mermaid source
 ```
 
 Or directly: `(new MarkdownRenderer())->render($model)` / `->renderMermaid($model)`.
-Internally, model-to-serializer dispatch is centralized in
-`MermaidSerializerRegistry` so new Mermaid-backed models do not add another
-`instanceof` branch to the renderer.
 
 ### Canonical output
 
@@ -67,19 +64,9 @@ The supported state grammar has no statement for diagram titles, and the git gra
 
 Models built directly, bypassing the builders, can be unrepresentable: a state id with a space, a git history not starting on `main`, a tagged merge commit, or labels containing Mermaid control characters. Those throw `InvalidArgumentException` with a message naming the offending element.
 
-Serializer rule: Mermaid output must be safely parseable by `MermaidParser`. If
-the supported grammar cannot express a model without changing its meaning, the
-serializer must refuse instead of emitting lossy text. This is tested per
-serializer with deliberately unrepresentable models.
-
-Shared Mermaid output checks live in `Renderer\Markdown\MermaidSerializable`:
-strict ids, field names, single-token attributes, and text control-character
-guards. Concrete serializers still own their domain-specific messages and
-ordering rules.
-
 ### Venn
 
-Venn currently has no text grammar in this package: `toMarkdown()`, `toMermaid()` and `MarkdownRenderer` reject `VennDiagram` with an `InvalidArgumentException`.
+Venn has no text grammar in this package: `toMarkdown()`, `toMermaid()` and `MarkdownRenderer` reject `VennDiagram` with an `InvalidArgumentException`.
 
 ## Below the facade
 
