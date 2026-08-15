@@ -6,7 +6,10 @@ title: Journey
 
 A journey diagram models a user experience as ordered tasks grouped into sections, each task scored 1 to 5 and attributed to one or more actors.
 
+<figure class="diagram-intro">
 <img src="../images/journey-diagram.svg" alt="A user journey with sections and scored tasks">
+<figcaption>A user journey organized into sections and scored tasks.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -57,10 +60,31 @@ $diagram = Diagram::journey()
 Diagram::of($diagram)->saveSvg('checkout.svg');
 ```
 
-- `title($text)` - sets the diagram title.
-- `section($title)` - starts a new section lane; throws `InvalidArgumentException` on an empty title.
-- `task($text, $score, $actors)` - appends a task to the current section; `$score` is an integer and `$actors` a non-empty list of names. Throws `InvalidArgumentException` when no section has been started.
-- `build()` - throws `InvalidArgumentException` when the diagram has no section, or a section has no task.
+`title()`
+: Sets the diagram title.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Non-empty title. |
+
+`section()`
+: Starts a new section lane. An empty title throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$title` | `string` | Section title. |
+
+`task()`
+: Appends a task to the current section. Calling it before `section()` throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Task label. |
+  | `$score` | `int` | Experience score from `1` to `5`. |
+  | `$actors` | `non-empty-list<string>` | Actors involved in the task. |
+
+`build()`
+: Assembles the immutable `JourneyDiagram`. A diagram without sections or a section without tasks throws.
 
 ## Options
 
@@ -75,13 +99,13 @@ Diagram::of($diagram)->saveSvg('checkout.svg');
 
 ## Themes
 
-Journey diagrams use `nodeFillColor` (mixed toward `backgroundColor` for the lane body), `nodeStrokeColor` (lane borders and header rule), `textColor` (titles and task text), `mutedTextColor` (actor captions), `backgroundColor` (canvas and score-badge numbers), and the `fontFamily` / `fontSize` pair. Task cards derive their wash and badge from the first `accentColors` entry; the rest of the palette is not used here, so its size does not matter.
+Journey diagrams use `nodeFillColor` (mixed toward `backgroundColor` for the lane body), `nodeStrokeColor` (lane borders and header rule), `textColor` (titles and task text), `mutedTextColor` (actor captions), `backgroundColor` (canvas and score-badge numbers), and the `fontFamily` / `fontSize` pair. Task cards derive their wash and badge from `accentColors[0]`.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`). See [Theming](../theming.md).
 
 <img src="../images/journey-diagram-theme.svg" alt="The same journey in the mono preset">
 
-`Theme::mono()` on the same tasks. Scores stay legible without colour, which is what a single-ink preset has to prove.
+`Theme::mono()` keeps task scores legible without colour.
 
 ## Parse
 

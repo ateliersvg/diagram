@@ -6,7 +6,10 @@ title: Block
 
 A block diagram is a set of rectangular blocks, optional one-level groups that frame related blocks, and directed connectors between them.
 
+<figure class="diagram-intro">
 <img src="../images/block-diagram.svg" alt="A block diagram with grouped blocks and relationships">
+<figcaption>Grouped blocks connected by directed relationships.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -65,12 +68,43 @@ $diagram = Diagram::block()
 Diagram::of($diagram)->saveSvg('layout-kernel.svg');
 ```
 
-- `title($text)` - sets a title (not part of the Mermaid grammar; dropped on serialization).
-- `block($id, $label)` - declares a block; the label defaults to the id. Blocks declared between `beginGroup()` and `endGroup()` join that group.
-- `beginGroup($id, $label)` - opens a group; the label defaults to the id. Throws when a group is already open (no nesting) or the id is a duplicate.
-- `endGroup()` - closes the current group. Throws when no group is open.
-- `relationship($from, $to, $label)` - adds a directed connector and auto-declares unknown endpoints with the id as label.
-- `build()` - throws `InvalidDiagramException` when a group is left open or no block was declared, or when a group has no members.
+`title()`
+: Sets a title. It is dropped during serialization because the Mermaid grammar has no place for it.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Non-empty title. |
+
+`block()`
+: Declares a block. Blocks declared between `beginGroup()` and `endGroup()` join that group.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique block identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`beginGroup()`
+: Opens a one-level group. Nested groups and duplicate ids throw.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$id` | `string` | Unique group identifier. |
+  | `$label` | `?string` | Display label; defaults to `$id`. |
+
+`endGroup()`
+: Closes the current group. Throws if none is open.
+
+`relationship()`
+: Adds a directed connector and auto-declares unknown endpoints with their id as label.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$from` | `string` | Source block identifier. |
+  | `$to` | `string` | Target block identifier. |
+  | `$label` | `?string` | Optional connector label. |
+
+`build()`
+: Assembles the immutable `BlockDiagram`. An open group, an empty diagram, or a group without members throws.
 
 ## Options
 
@@ -85,7 +119,7 @@ Diagram::of($diagram)->saveSvg('layout-kernel.svg');
 
 ## Themes
 
-Block diagrams use `nodeFillColor` for block boxes, `mutedTextColor` for block and group borders and the id text, `nodeStrokeColor` for connectors and arrowheads, and `textColor` for labels. They do **not** use `accentColors` (every block is styled uniformly), so the palette size does not matter here.
+Block diagrams use `nodeFillColor` for block boxes, `mutedTextColor` for block and group borders and the id text, `nodeStrokeColor` for connectors and arrowheads, and `textColor` for labels.
 
 All presets apply (`Theme::default()`, `dark()`, `blueprint()`, `mono()`, `neutral()`). See [Theming](../theming.md).
 

@@ -83,7 +83,7 @@ Increasing `spacingUnit` spreads the whole layout proportionally; increasing `fo
 
 ## Background pattern
 
-A theme can carry a `Scene\BackgroundPattern` painted behind the nodes, on top of the solid `backgroundColor`. The facade transfers it onto the `Scene`, and the SVG renderer emits it as a concrete `<pattern>` (no CSS variables), so it rasterizes like any other output. It stays renderer-agnostic: a future non-SVG renderer can honor the same data.
+A theme can carry a `Scene\BackgroundPattern` painted behind the nodes, on top of the solid `backgroundColor`. The facade transfers it onto the `Scene`, and the SVG renderer emits it as a concrete `<pattern>` (no CSS variables), so it rasterizes like any other output. The pattern remains renderer-agnostic data rather than SVG-specific configuration.
 
 ```php
 use Atelier\Diagram\Scene\BackgroundPattern;

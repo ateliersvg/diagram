@@ -8,26 +8,6 @@ order: 10
 - Input: fluent PHP builders or Mermaid text.
 - Output: SVG geometry or canonical Mermaid markdown.
 
-## Diagram types
-
-One page per type, each with the same sections (overview, format, builder API, options, themes, parse, debug, examples):
-
-- [State](diagrams/state-diagram.md)
-- [Venn](diagrams/venn-diagram.md)
-- [Git graph](diagrams/git-graph.md)
-- [Sequence](diagrams/sequence-diagram.md)
-- [Flowchart](diagrams/flowchart.md)
-- [Class](diagrams/class-diagram.md)
-- [ER](diagrams/er-diagram.md)
-- [Timeline](diagrams/timeline-diagram.md)
-- [Journey](diagrams/journey-diagram.md)
-- [Mindmap](diagrams/mindmap-diagram.md)
-- [Requirement](diagrams/requirement-diagram.md)
-- [Kanban](diagrams/kanban-diagram.md)
-- [Block](diagrams/block-diagram.md)
-- [Architecture](diagrams/architecture-diagram.md)
-- [C4](diagrams/c4-diagram.md)
-
 ## Install
 
 ```bash
@@ -48,24 +28,6 @@ $diagram = Diagram::flowchart()
 echo Diagram::of($diagram)->toSvg();
 ```
 
-Builder entry points:
-
-- `Diagram::state()`
-- `Diagram::venn()`
-- `Diagram::git()`
-- `Diagram::sequence()`
-- `Diagram::flowchart()`
-- `Diagram::classDiagram()`
-- `Diagram::er()`
-- `Diagram::timeline()`
-- `Diagram::journey()`
-- `Diagram::mindmap()`
-- `Diagram::requirement()`
-- `Diagram::kanban()`
-- `Diagram::block()`
-- `Diagram::architecture()`
-- `Diagram::c4()`
-
 Each builder produces a typed immutable model. `Diagram::of($model)` wraps the model for rendering.
 
 ## Parse Mermaid
@@ -82,24 +44,29 @@ $svg = $diagram->toSvg();
 $canonical = $diagram->toMermaid();
 ```
 
-Supported Mermaid headers:
+Flowcharts accept the `TD`, `TB`, and `LR` directions. Venn diagrams have no text grammar in this package.
 
-- `stateDiagram-v2` / `stateDiagram`
-- `gitGraph`
-- `sequenceDiagram`
-- `flowchart TD` / `flowchart TB` / `flowchart LR`
-- `classDiagram`
-- `erDiagram`
-- `timeline`
-- `journey`
-- `mindmap`
-- `requirementDiagram`
-- `kanban`
-- `block`
-- `architecture`
-- `C4Context` / `C4Container` / `C4Component`
+## Diagram types
 
-Venn diagrams currently have no text grammar in this package.
+Each type has the same documentation sections: overview, format, builder API, options, themes, parse, debug, and examples.
+
+| Diagram | Builder | Mermaid |
+|---|---|---|
+| [State](diagrams/state-diagram.md) | `Diagram::state()` | `stateDiagram-v2` / `stateDiagram` |
+| [Venn](diagrams/venn-diagram.md) | `Diagram::venn()` | |
+| [Git graph](diagrams/git-graph.md) | `Diagram::git()` | `gitGraph` |
+| [Sequence](diagrams/sequence-diagram.md) | `Diagram::sequence()` | `sequenceDiagram` |
+| [Flowchart](diagrams/flowchart.md) | `Diagram::flowchart()` | `flowchart` |
+| [Class](diagrams/class-diagram.md) | `Diagram::classDiagram()` | `classDiagram` |
+| [ER](diagrams/er-diagram.md) | `Diagram::er()` | `erDiagram` |
+| [Timeline](diagrams/timeline-diagram.md) | `Diagram::timeline()` | `timeline` |
+| [Journey](diagrams/journey-diagram.md) | `Diagram::journey()` | `journey` |
+| [Mindmap](diagrams/mindmap-diagram.md) | `Diagram::mindmap()` | `mindmap` |
+| [Requirement](diagrams/requirement-diagram.md) | `Diagram::requirement()` | `requirementDiagram` |
+| [Kanban](diagrams/kanban-diagram.md) | `Diagram::kanban()` | `kanban` |
+| [Block](diagrams/block-diagram.md) | `Diagram::block()` | `block` |
+| [Architecture](diagrams/architecture-diagram.md) | `Diagram::architecture()` | `architecture` |
+| [C4](diagrams/c4-diagram.md) | `Diagram::c4()` | `C4Context` / `C4Container` / `C4Component` |
 
 ## Output
 
@@ -127,13 +94,3 @@ try {
     $e->getSourceLine();
 }
 ```
-
-## Verify Locally
-
-```bash
-composer qa
-php examples/demo.php
-php examples/gallery.php
-```
-
-The demo command writes `examples/output/index.html`, with links to the gallery, showcase, label-polish audit, and effects demo. The gallery writes SVG and Mermaid artifacts to `examples/output/`.

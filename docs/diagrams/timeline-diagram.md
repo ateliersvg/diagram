@@ -6,7 +6,10 @@ title: Timeline
 
 A timeline is a sequence of events grouped into named sections, drawn as one horizontal lane per section along a shared axis.
 
+<figure class="diagram-intro">
 <img src="../images/timeline-diagram.svg" alt="A timeline with sections and dated events">
+<figcaption>Dated events organized into chronological sections.</figcaption>
+</figure>
 
 - [Overview](#overview)
 - [Format](#format)
@@ -20,7 +23,7 @@ A timeline is a sequence of events grouped into named sections, drawn as one hor
 
 The model lives in `Atelier\Diagram\Timeline\`: `TimelineDiagram` (sections plus an optional `Title`), `TimelineSection` (`title`, a non-empty list of events), and `TimelineEvent` (`label`, `date`). All model classes are immutable.
 
-Reach for it to show ordered events grouped into lanes: product plans, release narratives, incident reviews, project phases. Use it when the point is "what happened in which lane" rather than a charted date scale. In v0 the date is a plain label: it is rendered next to the event, not parsed or scaled onto a calendar axis.
+Reach for it to show ordered events grouped into lanes: product plans, release narratives, incident reviews, and project phases. Use it when the point is "what happened in which lane" rather than a charted date scale. Dates are rendered as labels; they are not parsed or scaled onto a calendar axis.
 
 ## Format
 
@@ -57,10 +60,30 @@ $diagram = Diagram::timeline()
 Diagram::of($diagram)->saveSvg('out.svg');
 ```
 
-- `title($text)` - sets a diagram title (optional).
-- `section($title)` - starts a new lane; throws `InvalidArgumentException` on an empty title.
-- `event($label, $date)` - adds an event to the current section; throws `InvalidArgumentException` when called before any section. The date is stored as a label.
-- `build()` - validates that at least one section exists and that every section has at least one event; throws `InvalidArgumentException` otherwise.
+`title()`
+: Sets an optional diagram title.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$text` | `string` | Non-empty title. |
+
+`section()`
+: Starts a new lane. An empty title throws.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$title` | `string` | Section title. |
+
+`event()`
+: Adds an event to the current section. Calling it before `section()` throws; the date remains a display label.
+
+  | Argument | Type | Description |
+  |---|---|---|
+  | `$label` | `string` | Event label. |
+  | `$date` | `string` | Displayed date label. |
+
+`build()`
+: Assembles the immutable `TimelineDiagram`. Missing sections and empty sections throw.
 
 ## Options
 

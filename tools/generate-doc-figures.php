@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 /*
  * Regenerates docs/images/*.svg from the examples documented by each page.
- * Adaptive figures keep a semantic canvas colour for label halos and badge
- * text, then make only the outermost SVG canvas transparent for embedding.
+ * Intro previews omit optional titles because the page heading already names
+ * the type. Adaptive figures keep a semantic canvas colour for label halos and
+ * badge text, then make only the outermost SVG canvas transparent for embedding.
  */
 
 use Atelier\Diagram\Diagram;
@@ -58,24 +59,33 @@ $adaptiveSvg = static function (Diagram $diagram, Theme $figureTheme): string {
     return $transparent;
 };
 
+$previewSvg = static function (Diagram $diagram, Theme $figureTheme) use ($adaptiveSvg): string {
+    $source = preg_replace('/^\h*title(?:\h+|:\h*).*(?:\R|$)/m', '', $diagram->toMermaid());
+    if (null === $source) {
+        throw new RuntimeException('Could not remove the title from the preview source.');
+    }
+
+    return $adaptiveSvg(Diagram::fromMermaid($source), $figureTheme);
+};
+
 $base = $theme();
 $marked = $theme('var(--accent, #7e73ee)');
 $figures = [
-    'state-diagram' => $adaptiveSvg(Diagram::of(buildStateMachineDiagram(Direction::TopToBottom, 'Order lifecycle')), $base),
-    'flowchart' => $adaptiveSvg(Diagram::of(buildFlowchartWorkflow()), $base),
-    'git-graph' => $adaptiveSvg(Diagram::of(buildGitHistory('Release history')), $base),
-    'sequence-diagram' => $adaptiveSvg(Diagram::of(buildSequenceWorkflow()), $base),
-    'class-diagram' => $adaptiveSvg(Diagram::of(buildClassDiagram()), $base),
-    'er-diagram' => $adaptiveSvg(Diagram::of(buildErDiagram()), $base),
-    'venn-diagram' => $adaptiveSvg(Diagram::of(buildVenn3()), $base),
-    'timeline-diagram' => $adaptiveSvg(Diagram::of(buildTimelineDiagram()), $base),
-    'journey-diagram' => $adaptiveSvg(Diagram::of(buildJourneyDiagram()), $base),
-    'mindmap-diagram' => $adaptiveSvg(Diagram::of(buildMindmap()), $base),
-    'requirement-diagram' => $adaptiveSvg(Diagram::of(buildRequirementDiagram()), $base),
-    'kanban-diagram' => $adaptiveSvg(Diagram::of(buildKanbanDiagram()), $base),
-    'block-diagram' => $adaptiveSvg(Diagram::of(buildBlockDiagram()), $base),
-    'architecture-diagram' => $adaptiveSvg(Diagram::of(buildArchitectureDiagram()), $base),
-    'c4-diagram' => $adaptiveSvg(Diagram::of(buildC4Diagram()), $base),
+    'state-diagram' => $previewSvg(Diagram::of(buildStateMachineDiagram(Direction::TopToBottom, 'Order lifecycle')), $base),
+    'flowchart' => $previewSvg(Diagram::of(buildFlowchartWorkflow()), $base),
+    'git-graph' => $previewSvg(Diagram::of(buildGitHistory('Release history')), $base),
+    'sequence-diagram' => $previewSvg(Diagram::of(buildSequenceWorkflow()), $base),
+    'class-diagram' => $previewSvg(Diagram::of(buildClassDiagram()), $base),
+    'er-diagram' => $previewSvg(Diagram::of(buildErDiagram()), $base),
+    'venn-diagram' => $adaptiveSvg(Diagram::of(buildVenn3(null)), $base),
+    'timeline-diagram' => $previewSvg(Diagram::of(buildTimelineDiagram()), $base),
+    'journey-diagram' => $previewSvg(Diagram::of(buildJourneyDiagram()), $base),
+    'mindmap-diagram' => $previewSvg(Diagram::of(buildMindmap()), $base),
+    'requirement-diagram' => $previewSvg(Diagram::of(buildRequirementDiagram()), $base),
+    'kanban-diagram' => $previewSvg(Diagram::of(buildKanbanDiagram()), $base),
+    'block-diagram' => $previewSvg(Diagram::of(buildBlockDiagram()), $base),
+    'architecture-diagram' => $previewSvg(Diagram::of(buildArchitectureDiagram()), $base),
+    'c4-diagram' => $previewSvg(Diagram::of(buildC4Diagram()), $base),
     'state-diagram-direction' => $adaptiveSvg(Diagram::of(buildStateMachineDiagram(Direction::LeftToRight, 'Order lifecycle')), $marked),
     'venn-diagram-two-sets' => $adaptiveSvg(Diagram::of(buildVenn2()), $marked),
     'git-graph-no-title' => $adaptiveSvg(Diagram::of(buildGitHistory()), $marked),

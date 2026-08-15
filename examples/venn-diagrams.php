@@ -25,10 +25,9 @@ function buildVenn2(): VennDiagram
         ->build();
 }
 
-function buildVenn3(): VennDiagram
+function buildVenn3(?string $title = 'Pick two'): VennDiagram
 {
-    return (new VennDiagramBuilder())
-        ->title('Pick two')
+    $builder = (new VennDiagramBuilder())
         ->set('Fast', 12)
         ->set('Good', 8)
         ->set('Cheap', 20)
@@ -38,6 +37,11 @@ function buildVenn3(): VennDiagram
         ->regionLabel('AB', 'pricey')
         ->regionLabel('AC', 'fragile')
         ->regionLabel('BC', 'slow')
-        ->regionLabel('ABC', 'myth')
-        ->build();
+        ->regionLabel('ABC', 'myth');
+
+    if (null !== $title) {
+        $builder->title($title);
+    }
+
+    return $builder->build();
 }
