@@ -1,13 +1,16 @@
-<h1 align="center">Atelier Diagram</h1>
+<h1 align="center">
+  <img src=".github/atelier-diagram.svg"
+       alt="Atelier Diagram">
+</h1>
 
 <p align="center">Fifteen diagram families, from PHP or from Mermaid, rendered to SVG without a browser.</p>
 
 <p align="center">
   <img alt="PHP Version" src="https://img.shields.io/badge/PHP-8.3%2B-7e73ee?labelColor=14141c">
+  <img alt="Version" src="https://img.shields.io/packagist/v/atelier/diagram?label=Version&labelColor=14141c&color=7e73ee">
   <img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/ateliersvg/diagram/CI.yml?branch=main&label=Tests&labelColor=14141c&color=7e73ee">
   <img alt="PHPUnit" src="https://img.shields.io/badge/PHPUnit-12-7e73ee?labelColor=14141c">
   <img alt="PHPStan" src="https://img.shields.io/badge/PHPStan-max-7e73ee?labelColor=14141c">
-  <img alt="Stable" src="https://img.shields.io/github/v/release/ateliersvg/diagram?label=Stable&labelColor=14141c&color=7e73ee">
   <img alt="License" src="https://img.shields.io/github/license/ateliersvg/diagram?label=License&labelColor=14141c&color=7e73ee">
 </p>
 
