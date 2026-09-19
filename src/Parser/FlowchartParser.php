@@ -105,21 +105,60 @@ final class FlowchartParser implements MermaidDiagramParserInterface
             return [];
         }
 
-        if (null !== $match = $matcher->matchRule(self::rule(self::NODE, '/^('.$id.')\[(.+)\]$/'))) {
-            $label = ParserValues::nonEmptyLabel($line, $match->get(2), 'Flow node');
-            $builder->node($match->get(1), $label);
+        if (null !== $match = $matcher->matchRule(self::rule(self::NODE, '/^('.$id.')\[([^\]]+)\]$/'))) {
+            $builder->node($match->get(1), self::label($line, $match->get(2), 'Flow node'));
 
             return [$match->get(1)];
         }
 
-        if (null !== $match = $matcher->matchRule(self::rule(self::EDGE, '/^('.$id.')\s*-->\s*(?:\|([^|]+)\|\s*)?('.$id.')$/'))) {
-            $label = ParserValues::optionalNonEmptyLabel($line, '' !== $match->get(2) ? $match->get(2) : null, 'Flow edge');
-            $builder->edge($match->get(1), $match->get(3), $label);
+        $shape = '(?:\[([^\]]+)\])?';
 
-            return [$match->get(1), $match->get(3)];
+        if (null !== $match = $matcher->matchRule(self::rule(self::EDGE, '/^('.$id.')'.$shape.'\s*-->\s*(?:\|([^|]+)\|\s*)?('.$id.')'.$shape.'$/'))) {
+            $from = $match->get(1);
+            $to = $match->get(4);
+
+            // A shape written inside the edge declares the node, exactly as a line
+            // of its own would. Declaring it first means the edge finds the label.
+            // A trailing optional group that does not participate has no capture
+            // at all, so these are read as optional rather than by index.
+            $fromShape = $match->optional(2);
+            $toShape = $match->optional(5);
+
+            if (null !== $fromShape && '' !== $fromShape) {
+                $builder->node($from, self::label($line, $fromShape, 'Flow node'));
+            }
+
+            if (null !== $toShape && '' !== $toShape) {
+                $builder->node($to, self::label($line, $toShape, 'Flow node'));
+            }
+
+            $rawEdgeLabel = $match->optional(3);
+            $edgeLabel = null !== $rawEdgeLabel && '' !== $rawEdgeLabel ? self::unquote($rawEdgeLabel) : null;
+            $builder->edge($from, $to, ParserValues::optionalNonEmptyLabel($line, $edgeLabel, 'Flow edge'));
+
+            return [$from, $to];
         }
 
         throw ParseErrors::unsupported($line, 'flowchart');
+    }
+
+    private static function label(Line $line, string $raw, string $what): string
+    {
+        return ParserValues::nonEmptyLabel($line, self::unquote($raw), $what);
+    }
+
+    /**
+     * Drops the quotes Mermaid uses to escape a label, so they stay out of the text.
+     */
+    private static function unquote(string $value): string
+    {
+        $value = trim($value);
+
+        if (\strlen($value) >= 2 && str_starts_with($value, '"') && str_ends_with($value, '"')) {
+            return substr($value, 1, -1);
+        }
+
+        return $value;
     }
 
     private static function rule(string $name, string $pattern): StatementRule
