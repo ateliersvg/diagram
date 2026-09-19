@@ -2,7 +2,7 @@
 
 Public API and behaviour changes only. Versions follow Semantic Versioning.
 
-## Unreleased
+## 0.8.0 - 2026-09-19
 
 ### Added
 
@@ -14,6 +14,7 @@ Public API and behaviour changes only. Versions follow Semantic Versioning.
 
 - Flowchart parser rejecting a node declared inside an edge, `A[Start] --> B[Stop]`
 - Flowchart parser reading a whole edge line as one node label when it ended in `]`
+- Labels overflowing their box, browser fonts being wider than the measurer assumes
 - Quotes Mermaid uses to escape a label kept in the label text
 
 ## 0.7.0 - 2026-08-07
