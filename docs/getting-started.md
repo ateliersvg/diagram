@@ -1,5 +1,6 @@
 ---
 order: 10
+description: Install the package, build a diagram with the fluent PHP builders or from Mermaid text, then render it as SVG or back to Mermaid.
 ---
 # Getting Started
 
