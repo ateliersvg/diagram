@@ -1,6 +1,7 @@
 ---
 order: 50
 title: Mermaid
+description: Parse and emit canonical Mermaid for fifteen diagram grammars. Each supported subset is small, exactly specified, and symmetric.
 ---
 # Mermaid Support
 
